@@ -12,7 +12,7 @@ const BreadCrumb: React.FC<BreadCrumbProps> = ({ link, name }) => {
     <nav aria-label="breadcrumb">
       <ol className="flex items-center">
         <li>
-          <Link href="/" className="ml-2 flex items-center">
+          <Link href="/" className="flex items-center">
             <House size={20} className="mr-1 inline-block" />
             Shop
           </Link>
