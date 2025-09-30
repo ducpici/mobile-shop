@@ -58,6 +58,7 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-4 py-2 md:grid-cols-3 lg:grid-cols-5">
           {isLoading
             ? productList.map((_, index) => (
+                //skeleton card
                 <div
                   key={index}
                   className="w-[200px] animate-pulse space-y-3 rounded p-4 shadow-sm"
