@@ -10,7 +10,7 @@ interface BreadCrumbProps {
 const BreadCrumb: React.FC<BreadCrumbProps> = ({ link, name }) => {
   return (
     <nav aria-label="breadcrumb">
-      <ol className="flex items-center">
+      <ol className="my-2 flex items-center">
         <li>
           <Link href="/" className="flex items-center">
             <House size={20} className="mr-1 inline-block" />
