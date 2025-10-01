@@ -7,33 +7,31 @@ import { useSidebar } from "@/contexts/SidebarContext";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const Header = () => {
-  const { collapsed, setCollapsed, isMobile } = useSidebar();
+  const { collapsed, setCollapsed } = useSidebar();
   const isLogin = true;
   return (
     <div className="sticky top-0 z-999 flex h-[60px] w-full items-center justify-between bg-[#C6E5F4] px-4 shadow-md">
-      {isMobile && (
-        <div className="menu transition-[transform] duration-300 ease-in-out">
-          {collapsed ? (
-            <X
-              size={25}
-              className="inline-block cursor-pointer"
-              onClick={() => setCollapsed(false)}
-            />
-          ) : (
-            <Menu
-              size={25}
-              className="inline-block cursor-pointer"
-              onClick={() => setCollapsed(true)}
-            />
-          )}
-        </div>
-      )}
+      <div className="menu block transition-[transform] duration-300 ease-in-out md:hidden">
+        {collapsed ? (
+          <X
+            size={25}
+            className="inline-block cursor-pointer"
+            onClick={() => setCollapsed(false)}
+          />
+        ) : (
+          <Menu
+            size={25}
+            className="inline-block cursor-pointer"
+            onClick={() => setCollapsed(true)}
+          />
+        )}
+      </div>
 
       <div className="logo flex items-center gap-2">
         <Link className="cursor-pointer" href="/">
           <Image src="/images/logo.png" width={60} height={60} alt="logo" />
         </Link>
-        {!isMobile && <h1 className="text-2xl">Mobile Shopping</h1>}
+        <h1 className="hidden text-2xl md:block">Mobile Shopping</h1>
       </div>
       <div className="user h-full flex-col">
         <Popover>
