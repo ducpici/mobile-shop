@@ -13,7 +13,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
         <Sidebar />
         <main
           className={`w-full p-2 transition-[padding] duration-300 ease-in-out md:p-4 ${
-            collapsed ? "md:pl-20" : "md:pl-64"
+            collapsed ? "md:pl-20" : "md:pl-68"
           }`}
         >
           {children}

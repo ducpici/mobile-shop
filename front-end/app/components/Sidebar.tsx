@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { Menu, Store, ShoppingCart, User } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -14,12 +14,19 @@ const Sidebar = () => {
     { href: "/cart", label: "Cart", icon: ShoppingCart },
     { href: "/profile", label: "My Profile", icon: User },
   ];
-
+  // Lock scroll khi sidebar mobile mở
+  useEffect(() => {
+    if (collapsed) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+  }, [collapsed]);
   return (
     <>
       {/* Desktop */}
       <div
-        className={`hidden min-h-screen flex-col bg-amber-50 p-4 shadow-md transition-[width] duration-300 ease-in-out md:flex ${
+        className={`shadow-right top-[60px] left-0 hidden min-h-screen flex-col bg-amber-50 p-4 transition-[width] duration-300 ease-in-out md:fixed md:flex ${
           collapsed ? "w-20" : "w-64"
         }`}
       >

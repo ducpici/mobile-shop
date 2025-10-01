@@ -10,7 +10,7 @@ const Header = () => {
   const { collapsed, setCollapsed } = useSidebar();
   const isLogin = true;
   return (
-    <div className="sticky top-0 z-999 flex h-[60px] w-full items-center justify-between bg-[#C6E5F4] px-4 shadow-md">
+    <div className="sticky top-0 z-999 flex h-[60px] w-full items-center justify-between bg-[#C6E5F4] px-2 shadow-md md:px-4">
       <div className="menu block transition-[transform] duration-300 ease-in-out md:hidden">
         {collapsed ? (
           <X
@@ -58,7 +58,7 @@ const Header = () => {
                   <span>Order</span>
                 </Link>
               </li>
-              <li className="border-t-1 border-gray-300"></li>
+              <li className="border-t border-gray-300"></li>
               <li>
                 {isLogin ? (
                   <Link
