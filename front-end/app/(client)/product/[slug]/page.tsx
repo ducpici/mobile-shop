@@ -19,7 +19,7 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
       <div className="mx-auto max-w-4xl rounded bg-white p-2 shadow-lg md:mt-10">
         <div className="flex flex-col gap-6 md:flex-row">
           <div className="">
-            <div className="flex w-100 items-center justify-center rounded-lg border border-gray-300 p-4">
+            <div className="flex w-full items-center justify-center rounded-lg border border-gray-300 p-4 md:w-100">
               <Image src={viewImage} alt={product.name} width={400} height={300} />
             </div>
             <div className="mt-2 flex justify-center gap-2">
@@ -63,7 +63,7 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
                 {product.price.toLocaleString("vi-VN")} ₫
               </span>
             </div>
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <span className="w-20 font-semibold">Color:</span>
             </div>
             <div className="flex items-center">
@@ -71,7 +71,7 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
             </div>
             <div className="flex items-center">
               <span className="w-20 font-semibold">Storage:</span>
-            </div>
+            </div> */}
             <div>
               <RatingStars rating={product.rating} />
             </div>
@@ -87,7 +87,6 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
                 Add to cart
               </button>
             </div>
-            <div className="h-100"></div>
           </div>
         </div>
       </div>

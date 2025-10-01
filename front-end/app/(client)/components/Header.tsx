@@ -62,7 +62,7 @@ const Header = () => {
               <li>
                 {isLogin ? (
                   <Link
-                    href="/logout"
+                    href="/login"
                     className="flex min-w-40 cursor-pointer items-center gap-2 rounded p-2 text-red-500 hover:bg-gray-200"
                   >
                     <LogOut />

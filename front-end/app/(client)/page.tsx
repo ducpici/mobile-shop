@@ -55,13 +55,13 @@ export default function Home() {
       {productList.length == 0 ? (
         <div className="mt-10 flex items-center justify-center">Product Not Found!</div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 py-2 md:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 py-2 md:grid-cols-6">
           {isLoading
             ? productList.map((_, index) => (
                 //skeleton card
                 <div
                   key={index}
-                  className="w-[200px] animate-pulse space-y-3 rounded border-2 p-4 shadow-md"
+                  className="m-w-[180px] animate-pulse space-y-3 rounded border-2 p-4 shadow-md"
                 >
                   {/* Image skeleton */}
                   <div className="h-40 w-full rounded-xl bg-gray-200" />

@@ -36,7 +36,7 @@ export const ProductCard = ({ id, name, mainImage, price, rating }: ProductCardP
             <Star className="mr-1 h-4 w-4 fill-yellow-500 text-yellow-500" />
             {rating.toFixed(1)}
           </div>
-          <button className="cursor-pointer rounded bg-blue-500 px-1 py-1 text-white hover:bg-blue-600 md:px-3">
+          <button className="cursor-pointer rounded bg-blue-500 px-1 py-1 text-sm text-white hover:bg-blue-600 md:px-3">
             Add to Cart
           </button>
         </div>
