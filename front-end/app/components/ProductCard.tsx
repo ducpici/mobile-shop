@@ -19,7 +19,7 @@ export const ProductCard = ({ id, name, mainImage, price, rating }: ProductCardP
       </Link>
 
       <div className="">
-        <div className="line-clamp-2 text-sm font-bold md:text-lg">{name}</div>
+        <div className="line-clamp-1 text-sm font-bold md:text-lg">{name}</div>
         <div className="flex items-center justify-between">
           <span className="text-sm font-semibold text-red-600 md:text-lg">
             {price.toLocaleString("vi-VN")} ₫

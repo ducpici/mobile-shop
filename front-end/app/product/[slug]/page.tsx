@@ -4,8 +4,8 @@ import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
 import { products } from "@/datas/products";
 import RatingStars from "@/components/RatingStars";
-const Page = ({ params }: { params: { slug: string } }) => {
-  const { slug } = params;
+const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = React.use(params);
   const product = products.find((p) => p.id === Number(slug));
   const [viewImage, setViewImage] = useState(product?.mainImage ?? "");
   const [isViewMore, setIsViewMore] = useState(false);
