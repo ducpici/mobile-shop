@@ -87,7 +87,7 @@ export const products: Product[] = [
   },
   {
     id: 7,
-    name: "Iphone XS Max",
+    name: "Iphone XS Max Iphone XS Max Iphone XS Max",
     mainImage: "/images/products/iphone-XS-max.png",
     images: [
       "/images/products/iphone-XS-max-1.png",

@@ -9,6 +9,7 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const product = products.find((p) => p.id === Number(slug));
   const [viewImage, setViewImage] = useState(product?.mainImage ?? "");
   const [isViewMore, setIsViewMore] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   if (!product) {
     return <div className="p-4 text-red-500">Product not found!</div>;
   }
@@ -18,16 +19,17 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
       <div className="mx-auto max-w-4xl rounded bg-white p-2 shadow-lg md:mt-10">
         <div className="flex flex-col gap-6 md:flex-row">
           <div className="">
-            <div className="flex w-100 items-center justify-center">
+            <div className="flex w-100 items-center justify-center rounded-lg border border-gray-300 p-4">
               <Image src={viewImage} alt={product.name} width={400} height={300} />
             </div>
             <div className="mt-2 flex justify-center gap-2">
               {product.images?.map((_, index) => (
                 <div
                   key={index}
-                  className="cursor-pointer rounded p-1 hover:outline-1 hover:outline-gray-400"
+                  className={`cursor-pointer rounded p-1 hover:outline-1 hover:outline-gray-400 ${selectedImageIndex == index ? "outline-1 outline-gray-400" : ""}`}
                   onClick={() => {
                     setViewImage(product.images[index]);
+                    setSelectedImageIndex(index);
                   }}
                 >
                   <Image
@@ -55,12 +57,21 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
               </span>
             </div>
 
-            <div>
+            <div className="flex items-center">
+              <span className="w-20 font-semibold">Price:</span>
               <span className="text-xl font-semibold">
                 {product.price.toLocaleString("vi-VN")} ₫
               </span>
             </div>
-
+            <div className="flex items-center">
+              <span className="w-20 font-semibold">Color:</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-20 font-semibold">RAM:</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-20 font-semibold">Storage:</span>
+            </div>
             <div>
               <RatingStars rating={product.rating} />
             </div>

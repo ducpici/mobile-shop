@@ -61,7 +61,7 @@ export default function Home() {
                 //skeleton card
                 <div
                   key={index}
-                  className="w-[200px] animate-pulse space-y-3 rounded p-4 shadow-sm"
+                  className="w-[200px] animate-pulse space-y-3 rounded border-2 p-4 shadow-md"
                 >
                   {/* Image skeleton */}
                   <div className="h-40 w-full rounded-xl bg-gray-200" />
