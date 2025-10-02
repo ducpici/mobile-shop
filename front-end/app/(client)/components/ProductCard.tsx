@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React from "react";
 import { Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
