@@ -36,7 +36,7 @@ const Header = () => {
       <div className="user h-full flex-col">
         <Popover>
           <PopoverTrigger className="h-full cursor-pointer">
-            <User size={35} className="text-gray-700" />
+            <User size={30} className="text-gray-700" />
           </PopoverTrigger>
           <PopoverContent align="end" className="z-1000 w-fit">
             <ul className="">
