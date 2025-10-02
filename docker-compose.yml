@@ -1,0 +1,9 @@
+version: "1.0"
+
+services:
+  nextjs-app:
+    build: ./front-end
+    container_name: mobile-shop
+    restart: always
+    ports:
+      - "4000:4000"
