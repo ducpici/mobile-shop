@@ -35,6 +35,7 @@ export default function Home() {
   const [openFilter, setOpenFilter] = useState(false);
   const priceOptions = generatePrices(100000000, 1000000);
   const starOptions = [0, 1, 2, 3, 4, 5];
+  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
@@ -67,6 +68,28 @@ export default function Home() {
     setOpenFilter(false);
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    setDataSearch(value);
+
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(value),
+      );
+      setProductList(filteredProducts);
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }, 500);
+
+    setTypingTimeout(timeout);
+  };
+
   return (
     <div className="space-y-3">
       <BreadCrumb link="/" />
@@ -79,21 +102,7 @@ export default function Home() {
           <input
             type="text"
             placeholder="Search..."
-            onChange={(e) => {
-              setDataSearch(e.target.value.toLowerCase());
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                const filteredProducts = products.filter((product) =>
-                  product.name.toLowerCase().includes(dataSearch),
-                );
-                setProductList(filteredProducts);
-                setIsLoading(true);
-                setTimeout(() => {
-                  setIsLoading(false);
-                }, 1000);
-              }
-            }}
+            onChange={handleSearchChange}
             className="w-full rounded border border-gray-400 px-4 py-2 focus:outline-none"
           />
           <Search className="absolute right-4 text-gray-500" />
