@@ -39,7 +39,7 @@ jobs:
 
       - name: Deploy to VPS
         run: |
+          rsync -a --delete ./ /var/www/mobile-shop/
           cd /var/www/mobile-shop
-          git pull origin production
           docker compose down
           docker compose up -d --build
