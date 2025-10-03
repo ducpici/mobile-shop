@@ -4,7 +4,6 @@ import React from "react";
 import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
 import { UserPen, CircleX, Calendar as CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 import Modal from "@/components/ui/Modal";
 import { user } from "@/datas/user";
 import { User, GenderLabel, Gender } from "@/types/user";
@@ -17,7 +16,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
