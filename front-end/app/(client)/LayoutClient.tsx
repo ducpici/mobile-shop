@@ -14,11 +14,11 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
         <Sidebar />
         <Toaster />
         <main
-          className={`w-full p-2 transition-[padding] duration-300 ease-in-out md:p-4 ${
-            collapsed ? "md:pl-20" : "md:pl-68"
+          className={`w-full transition-[padding] duration-300 ease-in-out ${
+            collapsed ? "md:pl-20" : "md:pl-64"
           }`}
         >
-          {children}
+          <div className="p-2 md:p-4">{children}</div>
         </main>
       </div>
     </div>
