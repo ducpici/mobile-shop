@@ -1,15 +1,37 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
 import { products } from "@/datas/products";
 import RatingStars from "@/components/RatingStars";
+import { addToCart } from "@/(client)/helpers/cartLocalStorage";
+import { toast } from "sonner";
+
 const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = React.use(params);
   const product = products.find((p) => p.id === Number(slug));
   const [viewImage, setViewImage] = useState(product?.mainImage ?? "");
   const [isViewMore, setIsViewMore] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const user = false;
+  const router = useRouter();
+
+  const handleAddToCart = (product_id: number) => {
+    if (user) {
+      //Call API add to cart
+    } else {
+      addToCart(product_id);
+      toast("Product added to your cart", {
+        action: {
+          label: "Go to cart",
+          onClick: () => {
+            router.push("/cart");
+          },
+        },
+      });
+    }
+  };
   if (!product) {
     return <div className="p-4 text-red-500">Product not found!</div>;
   }
@@ -82,7 +104,9 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
               </button>
               <button
                 className="cursor-pointer rounded bg-[#00FF19] px-3 py-2 font-semibold text-white"
-                onClick={() => {}}
+                onClick={() => {
+                  handleAddToCart(product.id);
+                }}
               >
                 Add to cart
               </button>

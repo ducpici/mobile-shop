@@ -26,6 +26,7 @@
       "@/datas/*": ["app/(client)/datas/*"],
       "@/lib/*": ["app/(client)/lib/*"],
       "@/utils/*": ["app/(client)/utils/*"],
+      "@/helpers/*": ["app/(client)/helpers/*"],
       "@/types/*": ["app/(client)/types/*"]
     }
   },

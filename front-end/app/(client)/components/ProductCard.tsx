@@ -1,8 +1,12 @@
+"use client";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
+import { addToCart } from "@/helpers/cartLocalStorage";
+import { toast } from "sonner";
 
 type ProductCardProps = Pick<
   Product,
@@ -10,6 +14,23 @@ type ProductCardProps = Pick<
 >;
 
 export const ProductCard = ({ id, name, mainImage, price, rating }: ProductCardProps) => {
+  const user = false;
+  const router = useRouter();
+  const handleAddToCart = (product_id: number) => {
+    if (user) {
+      //Call API add to cart
+    } else {
+      addToCart(product_id);
+      toast("Product added to your cart", {
+        action: {
+          label: "Go to cart",
+          onClick: () => {
+            router.push("/cart");
+          },
+        },
+      });
+    }
+  };
   return (
     <div className="w-full max-w-sm overflow-hidden rounded-lg bg-white p-2 shadow-lg transition-shadow duration-200 hover:shadow-xl">
       <Link href={`/product/${id}`}>
@@ -36,7 +57,10 @@ export const ProductCard = ({ id, name, mainImage, price, rating }: ProductCardP
             <Star className="mr-1 h-4 w-4 fill-yellow-500 text-yellow-500" />
             {rating.toFixed(1)}
           </div>
-          <button className="cursor-pointer rounded bg-blue-500 px-1 py-1 text-sm text-white hover:bg-blue-600 md:px-3">
+          <button
+            className="cursor-pointer rounded bg-blue-500 px-1 py-1 text-sm text-white hover:bg-blue-600 md:px-3"
+            onClick={() => handleAddToCart(id)}
+          >
             Add to Cart
           </button>
         </div>
