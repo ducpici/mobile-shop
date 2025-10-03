@@ -1,0 +1,45 @@
+name: Local VPS CI/CD
+
+on:
+  pull_request:
+    branches:
+      - production
+  push:
+    branches:
+      - production
+
+jobs:
+  # CI Job: chạy khi có Pull Request
+  ci-check:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install deps
+        run: npm install
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+  # CD Job: chạy khi push vào production
+  deploy:
+    runs-on: self-hosted
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS
+        run: |
+          cd /var/www/mobile-shop
+          git pull origin production
+          docker compose down
+          docker compose up -d --build

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { User, Menu, X, Package, LogIn, LogOut, FileUser } from "lucide-react";
@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 const Header = () => {
   const { collapsed, setCollapsed } = useSidebar();
+  const [openUserDropDown, setOpenUserDropDown] = useState(false);
   const isLogin = true;
   return (
     <div className="sticky top-0 z-999 flex h-[60px] w-full items-center justify-between bg-[#C6E5F4] px-2 shadow-md md:px-4">
@@ -34,7 +35,7 @@ const Header = () => {
         <h1 className="hidden text-2xl md:block">Mobile Shopping</h1>
       </div>
       <div className="user h-full flex-col">
-        <Popover>
+        <Popover open={openUserDropDown} onOpenChange={setOpenUserDropDown}>
           <PopoverTrigger className="h-full cursor-pointer">
             <User size={30} className="text-gray-700" />
           </PopoverTrigger>
@@ -44,6 +45,7 @@ const Header = () => {
                 <Link
                   href="/profile"
                   className="flex min-w-40 cursor-pointer items-center gap-2 rounded p-2 text-gray-700 hover:bg-gray-200"
+                  onClick={() => setOpenUserDropDown(false)}
                 >
                   <FileUser className="text-gray-500" />
                   <span>Profile</span>
@@ -53,6 +55,10 @@ const Header = () => {
                 <Link
                   href="/order"
                   className="flex min-w-40 cursor-pointer items-center gap-2 rounded p-2 text-gray-700 hover:bg-gray-200"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenUserDropDown(false);
+                  }}
                 >
                   <Package className="text-gray-500" />
                   <span>Order</span>
