@@ -8,17 +8,19 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const { collapsed } = useSidebar();
 
   return (
-    <div>
+    <div className="flex h-screen flex-col overflow-hidden">
       <Header />
-      <div className="flex">
+      <div className="flex overflow-hidden">
         <Sidebar />
         <Toaster />
         <main
-          className={`w-full transition-[padding] duration-300 ease-in-out ${
+          className={`flex-1 transition-[padding] duration-300 ease-in-out ${
             collapsed ? "md:pl-20" : "md:pl-64"
           }`}
         >
-          <div className="p-2 md:p-4">{children}</div>
+          <div className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 h-full overflow-y-auto p-2 md:p-4">
+            {children}
+          </div>
         </main>
       </div>
     </div>

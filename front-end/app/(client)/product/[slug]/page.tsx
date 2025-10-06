@@ -38,7 +38,7 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   return (
     <div>
       <BreadCrumb link={`/product/${slug}`} name="Product" />
-      <div className="mx-auto max-w-4xl rounded bg-white p-2 shadow-lg md:mt-10">
+      <div className="mx-auto min-h-screen max-w-7xl rounded bg-white p-2 shadow-lg md:mt-10">
         <div className="flex flex-col gap-6 md:flex-row">
           <div className="">
             <div className="flex w-full items-center justify-center rounded-lg border border-gray-300 p-4 md:w-100">

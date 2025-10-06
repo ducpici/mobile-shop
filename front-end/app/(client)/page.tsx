@@ -14,14 +14,23 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Check, ChevronsUpDown, ArrowDownUp, ArrowDown10, ArrowUp10 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "@/lib/utils";
 import { generatePrices } from "./utils/genPrices";
 import { toast } from "sonner";
 
 export default function Home() {
-  const [productList, setProductList] = useState(products as Product[]);
+  const [allProducts, setAllProducts] = useState(products as Product[]);
+  const [productList, setProductList] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dataSearch, setDataSearch] = useState("");
   const [minStarValue, setMinStarValue] = useState<number | null>(null);
@@ -36,35 +45,37 @@ export default function Home() {
   const priceOptions = generatePrices(100000000, 1000000);
   const starOptions = [0, 1, 2, 3, 4, 5];
   const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
+  const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+
   useEffect(() => {
+    setIsLoading(true);
     setTimeout(() => {
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      setProductList(allProducts.slice(start, end));
       setIsLoading(false);
-    }, 1000);
-  }, []);
+    }, 300);
+  }, [currentPage, allProducts]);
 
   const handleFilters = () => {
-    if (
-      minPriceValue == null ||
-      maxPriceValue == null ||
-      minStarValue == null ||
-      maxStarValue == null
-    ) {
-      toast("Please choose filters.");
-      return;
-    }
     const filtered = products.filter((product) => {
-      const matchPrice = product.price >= minPriceValue && product.price <= maxPriceValue;
-      const matchStar = product.rating >= minStarValue && product.rating <= maxStarValue;
+      const matchPrice =
+        (minPriceValue === null || product.price >= minPriceValue) &&
+        (maxPriceValue === null || product.price <= maxPriceValue);
+
+      const matchStar =
+        (minStarValue === null || product.rating >= minStarValue) &&
+        (maxStarValue === null || product.rating <= maxStarValue);
+
       const matchSearch = product.name.toLowerCase().includes(dataSearch.toLowerCase());
 
       return matchPrice && matchStar && matchSearch;
     });
-
-    setIsLoading(true);
-    setTimeout(() => {
-      setProductList(filtered);
-      setIsLoading(false);
-    }, 1000);
+    setAllProducts(filtered);
+    setCurrentPage(1);
     setOpenFilter(false);
   };
 
@@ -80,15 +91,14 @@ export default function Home() {
       const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(value),
       );
-      setProductList(filteredProducts);
-      setIsLoading(true);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
+      setAllProducts(filteredProducts);
+      setCurrentPage(1);
     }, 500);
 
     setTypingTimeout(timeout);
   };
+
+  // const handleSortByPriceASC = () => {};
 
   return (
     <div className="space-y-3">
@@ -102,6 +112,7 @@ export default function Home() {
           <input
             type="text"
             placeholder="Search..."
+            value={dataSearch}
             onChange={handleSearchChange}
             className="w-full rounded border border-gray-400 px-4 py-2 focus:outline-none"
           />
@@ -146,7 +157,7 @@ export default function Home() {
                                     value={option.toString()}
                                     onSelect={(currentValue) => {
                                       const selected = Number(currentValue);
-                                      if (maxPriceValue !== null && maxPriceValue <= selected) {
+                                      if (maxPriceValue !== null && maxPriceValue < selected) {
                                         toast("Please choose min < max");
                                         return;
                                       }
@@ -197,7 +208,7 @@ export default function Home() {
                                     value={option.toString()}
                                     onSelect={(currentValue) => {
                                       const selected = Number(currentValue);
-                                      if (minPriceValue !== null && minPriceValue >= selected) {
+                                      if (minPriceValue !== null && minPriceValue > selected) {
                                         toast("Please choose max > min");
                                         return;
                                       }
@@ -249,7 +260,7 @@ export default function Home() {
                                     value={option.toString()}
                                     onSelect={(currentValue) => {
                                       const selected = Number(currentValue);
-                                      if (maxStarValue !== null && maxStarValue <= selected) {
+                                      if (maxStarValue !== null && maxStarValue < selected) {
                                         toast("Please choose min < max");
                                         return;
                                       }
@@ -298,7 +309,7 @@ export default function Home() {
                                     value={option.toString()}
                                     onSelect={(currentValue) => {
                                       const selected = Number(currentValue);
-                                      if (minStarValue !== null && minStarValue >= selected) {
+                                      if (minStarValue !== null && minStarValue > selected) {
                                         toast("Please choose max > min");
                                         return;
                                       }
@@ -306,7 +317,7 @@ export default function Home() {
                                       setOpenMaxStar(false);
                                     }}
                                   >
-                                    {option.toLocaleString("vi-VN")} VNĐ
+                                    {option.toLocaleString("vi-VN")} Star
                                     <Check
                                       className={cn(
                                         "ml-auto",
@@ -336,6 +347,10 @@ export default function Home() {
                         setMaxPriceValue(null);
                         setMinStarValue(null);
                         setMaxStarValue(null);
+                        setDataSearch("");
+                        setAllProducts(products);
+                        setCurrentPage(1);
+                        setOpenFilter(false);
                       }}
                     >
                       Reset
@@ -346,21 +361,53 @@ export default function Home() {
             </PopoverContent>
           </Popover>
         </div>
+        {/* <div className="h-full">
+          <Popover>
+            <PopoverTrigger className="flex h-full cursor-pointer items-center justify-center">
+              <ArrowDownUp className="text-gray-500 hover:text-gray-600" />
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-fit p-1">
+              <div className="space-y-4 text-sm">
+                <h3 className="text-center font-bold">Sorts</h3>
+                <div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" role="combobox">
+                        Sort by price
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-fit p-0">
+                      <Command>
+                        <CommandList>
+                          <CommandGroup>
+                            <CommandItem onSelect={handleSortByPriceASC}>
+                              ASC <ArrowUp10 />
+                            </CommandItem>
+                            <CommandItem>
+                              DESC <ArrowDown10 />
+                            </CommandItem>
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div> */}
       </div>
       {productList.length == 0 ? (
         <div className="mt-10 flex items-center justify-center">Product Not Found!</div>
       ) : (
         <div className="grid grid-cols-2 gap-4 py-2 md:grid-cols-6">
           {isLoading
-            ? productList.map((_, index) => (
-                //skeleton card
+            ? Array.from({ length: itemsPerPage }).map((_, index) => (
                 <div
                   key={index}
                   className="m-w-[180px] animate-pulse space-y-3 rounded border-2 p-4 shadow-md"
                 >
-                  {/* Image skeleton */}
                   <div className="h-40 w-full rounded-xl bg-gray-200" />
-                  {/* Name skeleton */}
                   <div className="h-4 w-full rounded bg-gray-200" />
                   <div className="h-4 w-1/2 rounded bg-gray-200" />
                   <div className="flex items-center justify-between">
@@ -380,6 +427,49 @@ export default function Home() {
                   rating={product.rating}
                 />
               ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="mt-4 flex justify-center pb-10">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentPage((prev) => Math.max(prev - 1, 1));
+                  }}
+                />
+              </PaginationItem>
+
+              {Array.from({ length: totalPages }, (_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(i + 1);
+                    }}
+                    isActive={currentPage === i + 1}
+                  >
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       )}
     </div>

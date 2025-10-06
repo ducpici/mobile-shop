@@ -11,7 +11,7 @@ const Header = () => {
   const [openUserDropDown, setOpenUserDropDown] = useState(false);
   const isLogin = true;
   return (
-    <div className="sticky top-0 z-999 flex h-[60px] w-full items-center justify-between bg-[#C6E5F4] px-2 shadow-md md:px-4">
+    <div className="sticky top-0 z-999 flex h-[60px] w-full flex-shrink-0 items-center justify-between bg-[#C6E5F4] px-2 shadow-md md:px-4">
       <div className="menu block transition-[transform] duration-300 ease-in-out md:hidden">
         {collapsed ? (
           <X
@@ -29,8 +29,14 @@ const Header = () => {
       </div>
 
       <div className="logo flex items-center gap-2">
-        <Link className="cursor-pointer" href="/">
-          <Image src="/images/logo.png" width={60} height={60} alt="logo" />
+        <Link className="h-[60px] w-[60px] flex-shrink-0 cursor-pointer" href="/">
+          <Image
+            className="h-full w-full p-1"
+            src="/images/logo.png"
+            width={60}
+            height={60}
+            alt="logo"
+          />
         </Link>
         <h1 className="hidden text-2xl md:block">Mobile Shopping</h1>
       </div>

@@ -137,4 +137,47 @@ export const products: Product[] = [
     price: 29500000,
     rating: 4.5,
   },
+  {
+    id: 11,
+    name: "Iphone 16 Plus",
+    mainImage: "/images/products/iphone-16-plus.png",
+    images: [
+      "/images/products/iphone-16-plus-1.png",
+      "/images/products/iphone-16-plus-2.png",
+      "/images/products/iphone-16-plus-3.png",
+      "/images/products/iphone-16-plus-4.png",
+    ],
+    description:
+      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
+    price: 29500000,
+    rating: 4.5,
+  },
+  {
+    id: 12,
+    name: "Iphone 14",
+    mainImage: "/images/products/iphone-14.png",
+    images: [
+      "/images/products/iphone-14-1.png",
+      "/images/products/iphone-14-2.png",
+      "/images/products/iphone-14-3.png",
+    ],
+    description:
+      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
+    price: 29500000,
+    rating: 4.5,
+  },
+  {
+    id: 13,
+    name: "Iphone 16 Pro",
+    mainImage: "/images/products/iphone-16-pro.png",
+    images: [
+      "/images/products/iphone-16-pro-1.png",
+      "/images/products/iphone-16-pro-2.png",
+      "/images/products/iphone-16-pro-3.png",
+    ],
+    description:
+      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
+    price: 29500000,
+    rating: 4.5,
+  },
 ];
