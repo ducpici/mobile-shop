@@ -3,7 +3,7 @@ import { Product } from "@/types/product";
 export const products: Product[] = [
   {
     id: 1,
-    name: "Iphone 16 Pro Max",
+    name: "iPhone 16 Pro Max",
     mainImage: "/images/products/iphone-16-pro-max.png",
     images: [
       "/images/products/iphone-16-pro-max-1.png",
@@ -11,13 +11,13 @@ export const products: Product[] = [
       "/images/products/iphone-16-pro-max-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 19500000,
-    rating: 4,
+      "iPhone 16 Pro Max đánh dấu bước tiến mới của Apple với chip A18 Pro 3nm cực mạnh, cho tốc độ xử lý nhanh hơn 20% và tiết kiệm năng lượng vượt trội. Màn hình Super Retina XDR OLED 6.9 inch hỗ trợ ProMotion 120Hz hiển thị cực mượt, sắc nét đến từng chi tiết. Cụm camera 48MP cảm biến stacked cùng ống kính tele 5x giúp chụp ảnh siêu rõ, quay video 8K chuyên nghiệp. Khung Titanium siêu nhẹ, pin bền hơn, sạc nhanh USB-C, mang đến trải nghiệm sang trọng và hiệu suất đỉnh cao nhất trong thế giới smartphone.",
+    price: 34990000,
+    rating: 4.9,
   },
   {
     id: 2,
-    name: "Iphone 15 Pro Max",
+    name: "iPhone 15 Pro Max",
     mainImage: "/images/products/iphone-15-pro-max.png",
     images: [
       "/images/products/iphone-15-pro-max-1.png",
@@ -25,13 +25,13 @@ export const products: Product[] = [
       "/images/products/iphone-15-pro-max-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 15500000,
-    rating: 5,
+      "iPhone 15 Pro Max sở hữu chip A17 Pro 3nm mạnh mẽ với GPU 6 nhân hỗ trợ ray tracing, mang lại trải nghiệm gaming và đồ họa cực mượt. Thiết kế khung Titanium mới nhẹ hơn 10%, siêu bền và tinh tế. Màn hình OLED ProMotion 120Hz rực rỡ, cụm camera 48MP tele 5x chụp đêm đỉnh cao, quay video ProRes chất lượng điện ảnh. Cổng USB-C tiện lợi, pin lâu và khả năng xử lý AI tối ưu cho công việc lẫn giải trí. Đây là chiếc iPhone cân bằng hoàn hảo giữa sức mạnh, đẳng cấp và sự bền bỉ.",
+    price: 27990000,
+    rating: 4.8,
   },
   {
     id: 3,
-    name: "Iphone 14 Pro Max",
+    name: "iPhone 14 Pro Max",
     mainImage: "/images/products/iphone-14-pro-max.png",
     images: [
       "/images/products/iphone-14-pro-max-1.png",
@@ -39,13 +39,13 @@ export const products: Product[] = [
       "/images/products/iphone-14-pro-max-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 17500000,
-    rating: 3,
+      "iPhone 14 Pro Max mang đến trải nghiệm cao cấp với Dynamic Island sáng tạo, giúp tương tác mượt mà và sinh động hơn bao giờ hết. Chip A16 Bionic mạnh mẽ, màn hình Super Retina XDR OLED 120Hz siêu sáng cho hiển thị sống động. Camera 48MP chụp thiếu sáng xuất sắc, hỗ trợ quay phim Dolby Vision HDR chuyên nghiệp. Thiết kế thép không gỉ, mặt lưng kính mờ tinh tế cùng pin lớn đáp ứng trọn ngày dài sử dụng. Một biểu tượng của sự sang trọng và công nghệ hiện đại.",
+    price: 23990000,
+    rating: 4.7,
   },
   {
     id: 4,
-    name: "Iphone 13 Pro Max",
+    name: "iPhone 13 Pro Max",
     mainImage: "/images/products/iphone-13-pro-max.png",
     images: [
       "/images/products/iphone-13-pro-max-1.png",
@@ -53,13 +53,13 @@ export const products: Product[] = [
       "/images/products/iphone-13-pro-max-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 16500000,
-    rating: 5,
+      "iPhone 13 Pro Max vẫn giữ vững vị thế flagship nhờ chip A15 Bionic 5 lõi GPU cực mạnh, tiết kiệm pin xuất sắc. Màn hình Super Retina XDR 6.7 inch hỗ trợ ProMotion 120Hz cho thao tác mượt mà. Hệ thống 3 camera 12MP cải tiến với chế độ Cinematic Mode tạo hiệu ứng xóa phông tự nhiên, video HDR sắc nét. Pin dung lượng cao, thiết kế thép sang trọng, máy vẫn là lựa chọn hoàn hảo cho người dùng muốn hiệu năng mạnh mẽ và bền bỉ sau nhiều năm.",
+    price: 19990000,
+    rating: 4.6,
   },
   {
     id: 5,
-    name: "Iphone 12 Pro Max",
+    name: "iPhone 12 Pro Max",
     mainImage: "/images/products/iphone-12-pro-max.png",
     images: [
       "/images/products/iphone-12-pro-max-1.png",
@@ -67,13 +67,13 @@ export const products: Product[] = [
       "/images/products/iphone-12-pro-max-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 14500000,
-    rating: 4,
+      "iPhone 12 Pro Max mở ra kỷ nguyên 5G cho iPhone với chip A14 Bionic 5nm mạnh mẽ, tiết kiệm năng lượng hơn bao giờ hết. Cụm 3 camera 12MP kết hợp cảm biến LiDAR giúp chụp đêm sắc nét, lấy nét nhanh và chính xác. Màn hình OLED Super Retina XDR 6.7 inch hiển thị sống động, khung thép vuông vức mang lại vẻ hiện đại. Hỗ trợ MagSafe, chống nước chuẩn IP68, pin tốt và hiệu năng ổn định giúp iPhone 12 Pro Max vẫn là lựa chọn đáng giá.",
+    price: 16990000,
+    rating: 4.5,
   },
   {
     id: 6,
-    name: "Iphone 11 Pro Max",
+    name: "iPhone 11 Pro Max",
     mainImage: "/images/products/iphone-11-pro-max.png",
     images: [
       "/images/products/iphone-11-pro-max-1.png",
@@ -81,27 +81,27 @@ export const products: Product[] = [
       "/images/products/iphone-11-pro-max-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 12500000,
-    rating: 5,
+      "iPhone 11 Pro Max vẫn chứng tỏ sức hút với chip A13 Bionic hiệu năng cao, tối ưu hoàn hảo cho iOS. Màn hình Super Retina XDR OLED 6.5 inch cho màu sắc chân thực, độ sáng cao. Cụm 3 camera 12MP chụp đêm ấn tượng, quay 4K siêu mượt. Thiết kế thép không gỉ, mặt lưng kính mờ cao cấp, pin dùng cả ngày dài. Dù đã qua nhiều thế hệ, đây vẫn là chiếc iPhone biểu tượng của sự ổn định và sang trọng.",
+    price: 12990000,
+    rating: 4.6,
   },
   {
     id: 7,
-    name: "Iphone XS Max Iphone XS Max Iphone XS Max",
-    mainImage: "/images/products/iphone-XS-max.png",
+    name: "iPhone XS Max",
+    mainImage: "/images/products/iphone-xs-max.png",
     images: [
-      "/images/products/iphone-XS-max-1.png",
-      "/images/products/iphone-XS-max-2.png",
-      "/images/products/iphone-XS-max-3.png",
+      "/images/products/iphone-xs-max-1.png",
+      "/images/products/iphone-xs-max-2.png",
+      "/images/products/iphone-xs-max-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 9500000,
-    rating: 4.9,
+      "iPhone XS Max gây ấn tượng với màn hình OLED 6.5 inch Super Retina sắc nét, hiển thị chân thực đến từng chi tiết. Chip A12 Bionic tuy ra mắt lâu nhưng vẫn xử lý mượt mà các tác vụ nặng. Camera kép 12MP chụp chân dung, hỗ trợ Smart HDR cho ảnh rõ và sáng hơn. Thiết kế khung thép, kính cường lực sang trọng, Face ID nhanh và pin ổn định giúp XS Max vẫn là lựa chọn tốt cho người dùng ưa trải nghiệm Apple bền bỉ.",
+    price: 8990000,
+    rating: 4.5,
   },
   {
     id: 8,
-    name: "Iphone 16",
+    name: "iPhone 16",
     mainImage: "/images/products/iphone-16.png",
     images: [
       "/images/products/iphone-16-1.png",
@@ -109,23 +109,23 @@ export const products: Product[] = [
       "/images/products/iphone-16-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 25500000,
-    rating: 3.9,
+      "iPhone 16 mang lại hiệu năng mạnh mẽ vượt tầm nhờ chip A18 3nm mới, xử lý nhanh và tiết kiệm pin tốt hơn. Màn hình Super Retina XDR 6.1 inch sắc nét, hỗ trợ Dolby Vision HDR. Camera kép 48MP chụp ảnh tự nhiên, sắc nét, quay video 4K mượt mà. Thiết kế nhôm nguyên khối nhẹ, tinh tế cùng pin tối ưu cho cả ngày dài. Một lựa chọn cân bằng giữa hiệu năng, thẩm mỹ và giá trị sử dụng lâu dài.",
+    price: 27990000,
+    rating: 4.7,
   },
   {
     id: 9,
-    name: "Iphone 17 Pro Max",
+    name: "iPhone 17 Pro Max",
     mainImage: "/images/products/iphone-17-pro-max.png",
     images: ["/images/products/iphone-17-pro-max-1.png"],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 32500000,
-    rating: 4.9,
+      "iPhone 17 Pro Max là siêu phẩm mới nhất của Apple với chip A19 Pro thế hệ 3nm+, mang đến hiệu suất AI và đồ họa vượt trội. Cụm camera 48MP thế hệ mới hỗ trợ zoom quang học 6x, quay video 8K chuyên nghiệp. Màn hình ProMotion 7 inch siêu sáng 3000 nits, pin Graphene cực bền, sạc siêu nhanh USB-C 45W. Khung Titanium cao cấp, thiết kế tối giản, iPhone 17 Pro Max định nghĩa lại tiêu chuẩn của smartphone flagship tương lai.",
+    price: 38990000,
+    rating: 5,
   },
   {
     id: 10,
-    name: "Iphone 15",
+    name: "iPhone 15",
     mainImage: "/images/products/iphone-15.png",
     images: [
       "/images/products/iphone-15-1.png",
@@ -133,13 +133,13 @@ export const products: Product[] = [
       "/images/products/iphone-15-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 29500000,
-    rating: 4.5,
+      "iPhone 15 được nâng cấp toàn diện với chip A16 Bionic mạnh mẽ, mang lại tốc độ xử lý nhanh và mượt. Màn hình Super Retina XDR 6.1 inch hiển thị sắc nét, hỗ trợ Dynamic Island linh hoạt. Camera 48MP mới giúp ảnh chi tiết hơn, màu sắc trung thực. Cổng USB-C hiện đại, thời lượng pin cải thiện đáng kể. Với thiết kế trẻ trung và hiệu năng mạnh, iPhone 15 là lựa chọn lý tưởng cho người dùng năng động.",
+    price: 20990000,
+    rating: 4.6,
   },
   {
     id: 11,
-    name: "Iphone 16 Plus",
+    name: "iPhone 16 Plus",
     mainImage: "/images/products/iphone-16-plus.png",
     images: [
       "/images/products/iphone-16-plus-1.png",
@@ -148,13 +148,13 @@ export const products: Product[] = [
       "/images/products/iphone-16-plus-4.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 29500000,
-    rating: 4.5,
+      "iPhone 16 Plus chinh phục người dùng với màn hình lớn 6.8 inch Super Retina XDR tuyệt đẹp, chip A18 3nm mạnh mẽ và camera kép 48MP cực sắc nét. Pin dung lượng cao cho phép xem video hơn 30 giờ liên tục, hỗ trợ sạc nhanh và MagSafe. Thiết kế khung nhôm cao cấp, nhiều màu thời thượng. Đây là lựa chọn hoàn hảo cho ai muốn smartphone màn hình lớn, hiệu năng mạnh, giá hợp lý.",
+    price: 30990000,
+    rating: 4.8,
   },
   {
     id: 12,
-    name: "Iphone 14",
+    name: "iPhone 14",
     mainImage: "/images/products/iphone-14.png",
     images: [
       "/images/products/iphone-14-1.png",
@@ -162,13 +162,13 @@ export const products: Product[] = [
       "/images/products/iphone-14-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 29500000,
+      "iPhone 14 mang trong mình chip A15 Bionic mạnh mẽ, tối ưu năng lượng và tốc độ phản hồi nhanh. Camera kép 12MP hỗ trợ Action Mode chống rung xuất sắc, giúp quay video ổn định trong mọi tình huống. Màn hình OLED 6.1 inch sáng rõ, thiết kế gọn nhẹ, tinh tế. iPhone 14 vẫn là mẫu iPhone phổ biến nhờ hiệu năng tốt, hệ điều hành mượt mà và độ bền cao.",
+    price: 17990000,
     rating: 4.5,
   },
   {
     id: 13,
-    name: "Iphone 16 Pro",
+    name: "iPhone 16 Pro",
     mainImage: "/images/products/iphone-16-pro.png",
     images: [
       "/images/products/iphone-16-pro-1.png",
@@ -176,8 +176,8 @@ export const products: Product[] = [
       "/images/products/iphone-16-pro-3.png",
     ],
     description:
-      "iPhone 16 Pro Max sở hữu chipset A18 Pro mạnh mẽ giúp xử lý nhanh mọi tác vụ, camera 48 MP zoom quang 5x cho ảnh nét, màn hình 6.9 inch sống động. Pin dung lượng cao của máy hỗ trợ phát video tới 33 tiếng, đáp ứng nhu cầu giải trí liên tục suốt ngày dài. Cùng với đó là thiết kế khung Titanium bền nhẹ, mang lại cảm giác sang trọng và chắc chắn khi cầm.",
-    price: 29500000,
-    rating: 4.5,
+      "iPhone 16 Pro là biểu tượng của hiệu năng và thiết kế hiện đại. Chip A18 Pro 3nm cho tốc độ xử lý cực nhanh, hỗ trợ AI nâng cao. Màn hình OLED 6.3 inch Super Retina XDR sáng rõ, camera 48MP chụp ảnh sắc nét, quay video 8K chuyên nghiệp. Khung Titanium sang trọng, pin bền, sạc nhanh USB-C. Một chiếc flagship hoàn hảo dành cho người dùng yêu cầu cao về hiệu suất và thẩm mỹ.",
+    price: 31990000,
+    rating: 4.9,
   },
 ];

@@ -50,8 +50,8 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
       </div>
 
       <div className="mx-auto max-w-7xl rounded bg-white p-2 shadow-lg">
-        <div className="gap-6 md:flex">
-          <div className="flex w-full flex-col justify-center">
+        <div className="flex flex-col gap-6 md:flex-row">
+          <div className="">
             <div className="flex w-full items-center justify-center rounded-lg border border-gray-300 p-4 md:w-100">
               <Image src={viewImage} alt={product.name} width={400} height={400} />
             </div>
@@ -79,7 +79,7 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
           <div className="content space-y-3 md:space-y-4">
             <h2 className="text-xl font-bold md:text-2xl">{product.name}</h2>
             <div className="relative">
-              <p className={`text-justify ${isViewMore ? "" : "line-clamp-3"}`}>
+              <p className={`text-justify ${isViewMore ? "" : "line-clamp-4 md:line-clamp-3"}`}>
                 {product.description}
               </p>
               <span
