@@ -19,6 +19,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { format } from "date-fns";
 
 const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -159,7 +160,7 @@ const Page = () => {
                       if (date) {
                         setUserData({
                           ...userData,
-                          dob: date.toISOString().slice(0, 10),
+                          dob: format(date, "yyyy-MM-dd"),
                         });
                       }
                       setOpen(false);
