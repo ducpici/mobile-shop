@@ -58,7 +58,7 @@ export function decreaseQuantity(product_id: number) {
       cart[itemIndex].quantity -= 1;
     } else {
       // Nếu =1 thì xóa hẳn luôn
-      cart.splice(itemIndex, 1);
+      // cart.splice(itemIndex, 1);
     }
   }
 
