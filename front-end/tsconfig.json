@@ -29,7 +29,8 @@
       "@/lib/*": ["app/(client)/lib/*"],
       "@/utils/*": ["app/(client)/utils/*"],
       "@/helpers/*": ["app/(client)/helpers/*"],
-      "@/types/*": ["app/(client)/types/*"]
+      "@/types/*": ["app/(client)/types/*"],
+      "@/redux/*": ["app/(client)/redux/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "app", "next-env.d.ts", ".next/types/**/*.ts"],

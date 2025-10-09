@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
@@ -20,8 +20,13 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { format } from "date-fns";
+import { updateProfile } from "@/redux/profileSlice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const Page = () => {
+  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userData, setUserData] = useState(user as User);
   const [open, setOpen] = React.useState(false);
@@ -30,6 +35,8 @@ const Page = () => {
     { value: Gender.Male, label: "Male" },
     { value: Gender.Female, label: "Female" },
   ];
+  const profile = useSelector((state: RootState) => state.profile);
+
   const handleSave = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (
@@ -40,7 +47,9 @@ const Page = () => {
       userData.homeAddress == ""
     ) {
       toast("Please fill full information");
+      return;
     }
+    dispatch(updateProfile(userData));
     setIsModalOpen(false);
   };
 
@@ -61,42 +70,35 @@ const Page = () => {
         </div>
 
         <div className="flex items-center gap-6">
-          <Image
-            src="/images/user.png"
-            alt="avatar"
-            width={80}
-            height={80}
-            className="rounded-full"
-          />
+          <Image src="/images/user.png" alt="avatar" width={80} height={80} />
           <div>
-            <h2 className="text-2xl font-bold">{userData.name}</h2>
-            <p className="text-gray-600">Email: {userData.email}</p>
+            <h2 className="text-2xl font-bold">{profile.name}</h2>
+            <p className="text-gray-600">Email: {profile.email}</p>
           </div>
         </div>
         <div className="mt-6 space-y-6 text-sm">
           <div className="flex items-center">
             <span className="w-40 font-medium">Date of birth:</span>
             <div className="flex items-center gap-2">
-              <span className="flex-1">{formatDate(userData.dob.toString())}</span>
-              {/* <Calendar size={16} className="inline-block" /> */}
+              <span className="flex-1">{formatDate(profile.dob.toString())}</span>
             </div>
           </div>
 
           <div className="flex items-center">
             <span className="w-40 font-medium">Sex:</span>
             <div className="flex items-center gap-2">
-              <span className="flex-1">{GenderLabel[userData.gender]}</span>
+              <span className="flex-1">{GenderLabel[profile.gender]}</span>
             </div>
           </div>
 
           <div className="flex items-start">
             <span className="w-40 font-medium">Address Company:</span>
-            <p className="flex-1">{userData.companyAddress}</p>
+            <p className="flex-1">{profile.companyAddress}</p>
           </div>
 
           <div className="flex items-start">
             <span className="w-40 font-medium">Address Home:</span>
-            <p className="flex-1">{userData.homeAddress}</p>
+            <p className="flex-1">{profile.homeAddress}</p>
           </div>
         </div>
       </div>
