@@ -30,7 +30,8 @@
       "@/utils/*": ["app/(client)/utils/*"],
       "@/helpers/*": ["app/(client)/helpers/*"],
       "@/types/*": ["app/(client)/types/*"],
-      "@/redux/*": ["app/(client)/redux/*"]
+      "@/redux/*": ["app/(client)/redux/*"],
+      "@/hooks/*": ["app/(client)/hooks/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "app", "next-env.d.ts", ".next/types/**/*.ts"],

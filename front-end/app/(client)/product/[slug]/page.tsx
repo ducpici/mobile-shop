@@ -5,9 +5,11 @@ import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
 import { products } from "@/datas/products";
 import RatingStars from "@/components/RatingStars";
-import { addToCart } from "@/(client)/helpers/cartLocalStorage";
+// import { addToCart } from "@/(client)/helpers/cartLocalStorage";
 import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
+import { addToCart } from "@/redux/cartSlice";
+import { useAppDispatch } from "@/hooks/storeHook";
 
 const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = React.use(params);
@@ -20,12 +22,13 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const images: string[] = [product?.mainImage, ...(product?.images ?? [])].filter(
     (img): img is string => typeof img === "string",
   );
+  const dispatch = useAppDispatch();
 
   const handleAddToCart = (product_id: number) => {
     if (user) {
       //Call API add to cart
     } else {
-      addToCart(product_id);
+      dispatch(addToCart(product_id));
       toast("Product added to your cart", {
         action: {
           label: "Go to cart",

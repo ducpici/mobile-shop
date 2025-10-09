@@ -17,58 +17,81 @@ import { Button } from "@/components/ui/button";
 import { CartItem } from "../types/cart";
 import { products } from "@/datas/products";
 import { joinProductToCartItem } from "@/utils/joinProductToCartItem";
+import Link from "next/link";
+import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import {
-  getCart,
-  removeFromCart,
+  removeProduct,
   increaseQuantity,
   decreaseQuantity,
-} from "@/helpers/cartLocalStorage";
-import Link from "next/link";
+  updateQuantity,
+} from "@/redux/cartSlice";
+import { showLoading, hideLoading } from "@/redux/loadingSlice";
 
 const Page = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [subtotal, setSubTotal] = useState<number>(0);
   const [countItem, setCountItem] = useState<number>(0);
   const tax = (subtotal / 100) * 10;
+  const total = subtotal + tax;
   const user = false;
+  const dispatch = useAppDispatch();
+  const cart = useAppSelector((state) => state.cart);
+  const isLoading = useAppSelector((state) => state.loading.isLoading);
 
   useEffect(() => {
+    dispatch(showLoading());
     setTimeout(() => {
-      setIsLoading(false);
+      dispatch(hideLoading());
     }, 500);
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (user) {
       // Call API get cart from user);
     } else {
       // Guest → load từ localStorage
-      const localCart = getCart();
-      setCartItems(joinProductToCartItem(localCart));
+      setCartItems(joinProductToCartItem(cart));
     }
-  }, [user]);
+  }, [user, cart, dispatch]);
 
   useEffect(() => {
     let count = 0;
     const total = cartItems.reduce((acc, item) => {
       const product = products.find((p) => p.id === item.product_id);
-      count += 1;
-      setCountItem(count);
-      if (!product) return acc;
-      return acc + item.quantity * product.price;
+      if (product) {
+        count += item.id;
+        return acc + item.quantity * product.price;
+      }
+      return acc;
     }, 0);
+
+    setCountItem(count);
     setSubTotal(total);
   }, [cartItems]);
 
+  const handleDecreaseQuantity = (product_id: number) => {
+    dispatch(decreaseQuantity(product_id));
+  };
+
+  const handleIncreaseQuantity = (product_id: number) => {
+    dispatch(increaseQuantity(product_id));
+  };
+
+  const handleRemoveProduct = (product_id: number) => {
+    dispatch(removeProduct(product_id));
+  };
+
+  const handleInputQuantity = (product_id: number, quantity: number) => {
+    dispatch(updateQuantity({ product_id, quantity }));
+  };
+
   return (
-    <div>
+    <div className="relative">
       <BreadCrumb link="/cart" name="Cart" />
       {isLoading ? (
-        <>
-          <p>Loading...</p>
-        </>
+        <></>
       ) : (
         <>
           {cartItems.length == 0 ? (
@@ -125,9 +148,7 @@ const Page = () => {
                                       type="submit"
                                       className="cursor-pointer"
                                       onClick={() => {
-                                        removeFromCart(product.id);
-                                        setCartItems(joinProductToCartItem(getCart()));
-                                        setOpenDialog(false);
+                                        handleRemoveProduct(product.id);
                                       }}
                                     >
                                       Yes
@@ -151,8 +172,7 @@ const Page = () => {
                                     <span
                                       className="cursor-pointer rounded p-2 hover:bg-gray-300"
                                       onClick={() => {
-                                        const updated = decreaseQuantity(product.id);
-                                        setCartItems(joinProductToCartItem(updated));
+                                        handleDecreaseQuantity(product.id);
                                       }}
                                     >
                                       <Minus size={15} />
@@ -163,23 +183,14 @@ const Page = () => {
                                       value={item.quantity}
                                       onChange={(e) => {
                                         const newQty = Number(e.target.value);
-                                        if (newQty <= 0) return; // không cho nhập âm hoặc 0
-                                        // cập nhật trong localStorage
-                                        const updated = getCart().map((c) =>
-                                          c.product_id === product.id
-                                            ? { ...c, quantity: newQty }
-                                            : c,
-                                        );
-                                        localStorage.setItem("cart", JSON.stringify(updated));
-                                        // cập nhật state
-                                        setCartItems(joinProductToCartItem(updated));
+                                        // if (newQty <= 0) return;
+                                        handleInputQuantity(product.id, newQty);
                                       }}
                                     />
                                     <span
                                       className="cursor-pointer rounded p-2 hover:bg-gray-300"
                                       onClick={() => {
-                                        const updated = increaseQuantity(product.id);
-                                        setCartItems(joinProductToCartItem(updated));
+                                        handleIncreaseQuantity(product.id);
                                       }}
                                     >
                                       <Plus size={15} />
@@ -212,7 +223,7 @@ const Page = () => {
                         <div className="flex items-center justify-between">
                           <span className="font-bold">Total:</span>
                           <span className="text-xl font-semibold text-red-500">
-                            {(subtotal + tax).toLocaleString("vi")}₫
+                            {total.toLocaleString("vi")}₫
                           </span>
                         </div>
                       </div>
