@@ -3,6 +3,7 @@ import profileSlice from "./profileSlice";
 import cartSlice from "./cartSlice";
 import loadingSlice from "./loadingSlice";
 import filterSlice from "./filterSlice";
+import sidebarSlice from "./sidebarSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     cart: cartSlice,
     loading: loadingSlice,
     filter: filterSlice,
+    sidebar: sidebarSlice,
   },
 });
 

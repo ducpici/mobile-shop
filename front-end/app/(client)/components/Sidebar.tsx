@@ -3,12 +3,14 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { Menu, Store, ShoppingCart, User } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useSidebar } from "@/contexts/SidebarContext";
+import { useAppSelector, useAppDispatch } from "@/hooks/storeHook";
+import { setCollapsed, setMobileOpen } from "@/redux/sidebarSlice";
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const { collapsed, setCollapsed } = useSidebar();
-
+  const dispatch = useAppDispatch();
+  const collapsed = useAppSelector((state) => state.sidebar.collapsed);
+  const mobileOpen = useAppSelector((state) => state.sidebar.mobileOpen);
   const pageRoutes = [
     { href: "/", label: "Shop", icon: Store },
     { href: "/cart", label: "Cart", icon: ShoppingCart },
@@ -16,12 +18,12 @@ const Sidebar = () => {
   ];
   // Lock scroll khi sidebar mobile mở
   useEffect(() => {
-    if (collapsed) {
+    if (mobileOpen) {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
     }
-  }, [collapsed]);
+  }, [mobileOpen]);
   return (
     <>
       {/* Desktop */}
@@ -41,7 +43,7 @@ const Sidebar = () => {
             <Menu
               size={25}
               className="inline-block cursor-pointer"
-              onClick={() => setCollapsed(!collapsed)}
+              onClick={() => dispatch(setCollapsed(!collapsed))}
             />
           </li>
           {pageRoutes.map((item) => {
@@ -73,7 +75,7 @@ const Sidebar = () => {
       {/* Mobile */}
       <div
         className={`fixed top-[60px] left-0 z-20 flex min-h-screen w-64 transform flex-col bg-amber-50 p-4 shadow-md transition-transform duration-300 ease-in-out md:hidden ${
-          collapsed ? "translate-x-0" : "-translate-x-full"
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <ul className="space-y-1">
@@ -91,7 +93,7 @@ const Sidebar = () => {
                 <Link
                   className="flex cursor-pointer items-center"
                   href={item.href}
-                  onClick={() => setCollapsed(false)}
+                  onClick={() => dispatch(setMobileOpen(false))}
                 >
                   <Icon size={25} className="inline-block" />
                   <span className="ml-2 text-nowrap">{item.label}</span>
@@ -103,10 +105,10 @@ const Sidebar = () => {
       </div>
 
       {/* Overlay mờ */}
-      {collapsed && (
+      {mobileOpen && (
         <div
           className="fixed inset-0 z-10 bg-black/40 md:hidden"
-          onClick={() => setCollapsed(false)}
+          onClick={() => dispatch(setMobileOpen(false))}
         />
       )}
     </>
