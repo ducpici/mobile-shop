@@ -178,13 +178,17 @@ const Page = () => {
                                       <Minus size={15} />
                                     </span>
                                     <input
-                                      type="number"
+                                      type="text"
+                                      inputMode="numeric"
+                                      pattern="[0-9]*"
                                       className="relative w-12 rounded border border-gray-400 text-center"
                                       value={item.quantity}
                                       onChange={(e) => {
-                                        const newQty = Number(e.target.value);
-                                        // if (newQty <= 0) return;
-                                        handleInputQuantity(product.id, newQty);
+                                        const value = e.target.value;
+                                        if (/^[0-9]+$/.test(value)) {
+                                          const newQty = value === "" ? 0 : Number(value);
+                                          handleInputQuantity(product.id, newQty);
+                                        }
                                       }}
                                     />
                                     <span
