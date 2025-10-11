@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SidebarProvider } from "@/contexts/SidebarContext";
 import LayoutClient from "./LayoutClient"; // tách ra file client
 
 const geistSans = Geist({
@@ -24,9 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <SidebarProvider>
-          <LayoutClient>{children}</LayoutClient>
-        </SidebarProvider>
+        <LayoutClient>{children}</LayoutClient>
       </body>
     </html>
   );

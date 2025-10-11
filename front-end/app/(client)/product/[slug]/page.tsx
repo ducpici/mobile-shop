@@ -5,9 +5,11 @@ import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
 import { products } from "@/datas/products";
 import RatingStars from "@/components/RatingStars";
-import { addToCart } from "@/(client)/helpers/cartLocalStorage";
+import Link from "next/link";
 import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
+import { addToCart } from "@/redux/cartSlice";
+import { useAppDispatch } from "@/hooks/storeHook";
 
 const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = React.use(params);
@@ -20,12 +22,13 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const images: string[] = [product?.mainImage, ...(product?.images ?? [])].filter(
     (img): img is string => typeof img === "string",
   );
+  const dispatch = useAppDispatch();
 
   const handleAddToCart = (product_id: number) => {
     if (user) {
       //Call API add to cart
     } else {
-      addToCart(product_id);
+      dispatch(addToCart(product_id));
       toast("Product added to your cart", {
         action: {
           label: "Go to cart",
@@ -44,12 +47,15 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
       <div className="flex items-center justify-between">
         <BreadCrumb link={`/product/${slug}`} name="Product" />
         <div className="relative">
-          <ShoppingCart />
+          <Link href={"/cart"}>
+            <ShoppingCart />
+          </Link>
+
           <div className="absolute top-0 right-0 flex items-center justify-center rounded-full bg-red-500 text-white"></div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl rounded bg-white p-2 shadow-lg">
+      <div className="">
         <div className="flex flex-col gap-6 md:flex-row">
           <div className="">
             <div className="flex w-full items-center justify-center rounded-lg border border-gray-300 p-4 md:w-100">

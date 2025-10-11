@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
@@ -14,6 +15,13 @@ import { Filter, ChevronsUpDown, Check } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { generatePrices } from "@/utils/genPrices";
+import {
+  setMinPrice,
+  setMaxPrice,
+  setMinStar,
+  setMaxStar,
+  resetFilters,
+} from "@/redux/filterSlice";
 import { FilterValues } from "@/types/filters";
 
 type ProductFiltersProps = {
@@ -22,22 +30,17 @@ type ProductFiltersProps = {
 };
 
 const ProductFilters = ({ onFilter, onReset }: ProductFiltersProps) => {
+  const dispatch = useAppDispatch();
+  const filters = useAppSelector((state) => state.filter);
+
+  const [openFilter, setOpenFilter] = useState(false);
   const [openMinPrice, setOpenMinPrice] = useState(false);
   const [openMaxPrice, setOpenMaxPrice] = useState(false);
   const [openMinStar, setOpenMinStar] = useState(false);
   const [openMaxStar, setOpenMaxStar] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
-  const [minPrice, setMinPrice] = useState<number | null>(null);
-  const [maxPrice, setMaxPrice] = useState<number | null>(null);
-  const [minStar, setMinStar] = useState<number | null>(null);
-  const [maxStar, setMaxStar] = useState<number | null>(null);
+
   const priceOptions = generatePrices(50000000, 1000000);
   const starOptions = [0, 1, 2, 3, 4, 5];
-  const defaultFilterValues = {
-    price: { min: null, max: null },
-    star: { min: null, max: null },
-  };
-  const [filters, setFilters] = useState<FilterValues>(defaultFilterValues);
 
   const handleApply = () => {
     onFilter(filters);
@@ -45,12 +48,8 @@ const ProductFilters = ({ onFilter, onReset }: ProductFiltersProps) => {
   };
 
   const handleReset = () => {
-    setMinPrice(null);
-    setMaxPrice(null);
-    setMinStar(null);
-    setMaxStar(null);
+    dispatch(resetFilters());
     onReset();
-    setFilters(defaultFilterValues);
     setOpenFilter(false);
   };
 
@@ -59,258 +58,211 @@ const ProductFilters = ({ onFilter, onReset }: ProductFiltersProps) => {
       <PopoverTrigger className="flex h-full cursor-pointer items-center justify-center">
         <Filter className="text-gray-500 hover:text-gray-600" />
       </PopoverTrigger>
+
       <PopoverContent align="end">
         <div className="space-y-4 text-sm">
           <h3 className="text-center font-bold">Filters</h3>
+
+          {/* Price Filter */}
           <div className="space-y-2">
-            <div className="space-y-2">
-              <span className="font-semibold">Price</span>
-              <div className="flex items-center justify-between">
-                <span>From: </span>
-                <Popover open={openMinPrice} onOpenChange={setOpenMinPrice}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={openMinPrice}
-                      className="w-[200px] justify-between"
-                    >
-                      {minPrice !== null
-                        ? minPrice.toLocaleString("vi-VN") + " VNĐ"
-                        : "Select min price..."}
-                      <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search min price..." className="h-9" />
-                      <CommandList>
-                        <CommandEmpty>No price found.</CommandEmpty>
-                        <CommandGroup>
-                          {priceOptions.map((option, i) => (
-                            <CommandItem
-                              key={i}
-                              value={option.toString()}
-                              onSelect={(currentValue) => {
-                                const selected = Number(currentValue);
-                                if (maxPrice !== null && maxPrice < selected) {
-                                  toast("Please choose min < max");
-                                  return;
-                                }
-                                setMinPrice(selected);
-                                setFilters((prev) => ({
-                                  ...prev,
-                                  price: {
-                                    ...prev.price,
-                                    min: selected,
-                                  },
-                                }));
-                                setOpenMinPrice(false);
-                              }}
-                            >
-                              {option.toLocaleString("vi-VN")} VNĐ
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  minPrice === option ? "opacity-100" : "opacity-0",
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>To: </span>
-                <Popover open={openMaxPrice} onOpenChange={setOpenMaxPrice}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={openMaxPrice}
-                      className="w-[200px] justify-between"
-                    >
-                      {maxPrice !== null
-                        ? maxPrice.toLocaleString("vi-VN") + " VNĐ"
-                        : "Select max price..."}
-                      <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search max price..." className="h-9" />
-                      <CommandList>
-                        <CommandEmpty>No price found.</CommandEmpty>
-                        <CommandGroup>
-                          {priceOptions.map((option, i) => (
-                            <CommandItem
-                              key={i}
-                              value={option.toString()}
-                              onSelect={(currentValue) => {
-                                const selected = Number(currentValue);
-                                if (minPrice !== null && minPrice > selected) {
-                                  toast("Please choose max > min");
-                                  return;
-                                }
-                                setMaxPrice(selected);
-                                setFilters((prev) => ({
-                                  ...prev,
-                                  price: {
-                                    ...prev.price,
-                                    max: selected,
-                                  },
-                                }));
-                                setOpenMaxPrice(false);
-                              }}
-                            >
-                              {option.toLocaleString("vi-VN")} VNĐ
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  maxPrice === option ? "opacity-100" : "opacity-0",
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
+            <span className="font-semibold">Price</span>
+            <div className="flex items-center justify-between">
+              <span>From:</span>
+              <Popover open={openMinPrice} onOpenChange={setOpenMinPrice}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[200px] justify-between">
+                    {filters.price.min !== null
+                      ? filters.price.min.toLocaleString("vi-VN") + " VNĐ"
+                      : "Select price..."}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search min price..." />
+                    <CommandList>
+                      <CommandEmpty>No price found.</CommandEmpty>
+                      <CommandGroup>
+                        {priceOptions.map((option) => (
+                          <CommandItem
+                            key={option}
+                            value={option.toString()}
+                            onSelect={() => {
+                              if (filters.price.max && filters.price.max < option) {
+                                toast("Please choose min < max");
+                                return;
+                              }
+                              dispatch(setMinPrice(option));
+                              setOpenMinPrice(false);
+                            }}
+                          >
+                            {option.toLocaleString("vi-VN")} VNĐ
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                filters.price.min === option ? "opacity-100" : "opacity-0",
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
-            <div className="space-y-2">
-              <span className="font-semibold">Star</span>
-              <div className="flex items-center justify-between">
-                <span>From: </span>
-                <Popover open={openMinStar} onOpenChange={setOpenMinStar}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={openMinStar}
-                      className="w-[200px] justify-between"
-                    >
-                      {minStar !== null ? minStar + " Star" : "Select min star..."}
-                      <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search min star..." className="h-9" />
-                      <CommandList>
-                        <CommandEmpty>No star found.</CommandEmpty>
-                        <CommandGroup>
-                          {starOptions.map((option, i) => (
-                            <CommandItem
-                              key={i}
-                              value={option.toString()}
-                              onSelect={(currentValue) => {
-                                const selected = Number(currentValue);
-                                if (maxStar !== null && maxStar < selected) {
-                                  toast("Please choose min < max");
-                                  return;
-                                }
-                                setMinStar(selected);
-                                setFilters((prev) => ({
-                                  ...prev,
-                                  star: {
-                                    ...prev.price,
-                                    min: selected,
-                                  },
-                                }));
-                                setOpenMinStar(false);
-                              }}
-                            >
-                              {option} Star
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  minStar === option ? "opacity-100" : "opacity-0",
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>To: </span>
-                <Popover open={openMaxStar} onOpenChange={setOpenMaxStar}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={openMaxStar}
-                      className="w-[200px] justify-between"
-                    >
-                      {maxStar !== null ? maxStar + " Star" : "Select max star..."}
-                      <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search max star..." className="h-9" />
-                      <CommandList>
-                        <CommandEmpty>No price found.</CommandEmpty>
-                        <CommandGroup>
-                          {starOptions.map((option, i) => (
-                            <CommandItem
-                              key={i}
-                              value={option.toString()}
-                              onSelect={(currentValue) => {
-                                const selected = Number(currentValue);
-                                if (minStar !== null && minStar > selected) {
-                                  toast("Please choose max > min");
-                                  return;
-                                }
-                                setMaxStar(selected);
-                                setFilters((prev) => ({
-                                  ...prev,
-                                  star: {
-                                    ...prev.price,
-                                    max: selected,
-                                  },
-                                }));
-                                setOpenMaxStar(false);
-                              }}
-                            >
-                              {option.toLocaleString("vi-VN")} Star
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  maxStar === option ? "opacity-100" : "opacity-0",
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
+
+            <div className="flex items-center justify-between">
+              <span>To:</span>
+              <Popover open={openMaxPrice} onOpenChange={setOpenMaxPrice}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[200px] justify-between">
+                    {filters.price.max !== null
+                      ? filters.price.max.toLocaleString("vi-VN") + " VNĐ"
+                      : "Select price..."}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search max price..." />
+                    <CommandList>
+                      <CommandEmpty>No price found.</CommandEmpty>
+                      <CommandGroup>
+                        {priceOptions.map((option) => (
+                          <CommandItem
+                            key={option}
+                            value={option.toString()}
+                            onSelect={() => {
+                              if (filters.price.min && filters.price.min > option) {
+                                toast("Please choose max > min");
+                                return;
+                              }
+                              dispatch(setMaxPrice(option));
+                              setOpenMaxPrice(false);
+                            }}
+                          >
+                            {option.toLocaleString("vi-VN")} VNĐ
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                filters.price.max === option ? "opacity-100" : "opacity-0",
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
-            <div className="flex justify-center gap-4">
-              <button
-                className="cursor-pointer rounded bg-blue-500 px-3 py-2 font-semibold text-white"
-                onClick={handleApply}
-              >
-                Filter
-              </button>
-              <button
-                className="cursor-pointer rounded bg-red-500 px-3 py-2 font-semibold text-white"
-                onClick={handleReset}
-              >
-                Reset
-              </button>
+          </div>
+
+          {/* Star Filter */}
+          <div className="space-y-2">
+            <span className="font-semibold">Star</span>
+            <div className="flex items-center justify-between">
+              <span>From:</span>
+              <Popover open={openMinStar} onOpenChange={setOpenMinStar}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[200px] justify-between">
+                    {filters.star.min !== null ? `${filters.star.min} Star` : "Select star..."}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search min star..." />
+                    <CommandList>
+                      <CommandGroup>
+                        {starOptions.map((option) => (
+                          <CommandItem
+                            key={option}
+                            value={option.toString()}
+                            onSelect={() => {
+                              if (filters.star.max && filters.star.max < option) {
+                                toast("Please choose min < max");
+                                return;
+                              }
+                              dispatch(setMinStar(option));
+                              setOpenMinStar(false);
+                            }}
+                          >
+                            {option} Star
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                filters.star.min === option ? "opacity-100" : "opacity-0",
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
+
+            <div className="flex items-center justify-between">
+              <span>To:</span>
+              <Popover open={openMaxStar} onOpenChange={setOpenMaxStar}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[200px] justify-between">
+                    {filters.star.max !== null ? `${filters.star.max} Star` : "Select star..."}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search max star..." />
+                    <CommandList>
+                      <CommandGroup>
+                        {starOptions.map((option) => (
+                          <CommandItem
+                            key={option}
+                            value={option.toString()}
+                            onSelect={() => {
+                              if (filters.star.min && filters.star.min > option) {
+                                toast("Please choose max > min");
+                                return;
+                              }
+                              dispatch(setMaxStar(option));
+                              setOpenMaxStar(false);
+                            }}
+                          >
+                            {option} Star
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                filters.star.max === option ? "opacity-100" : "opacity-0",
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-center gap-4">
+            <button
+              className="cursor-pointer rounded bg-blue-500 px-3 py-2 font-semibold text-white"
+              onClick={handleApply}
+            >
+              Filter
+            </button>
+            <button
+              className="cursor-pointer rounded bg-red-500 px-3 py-2 font-semibold text-white"
+              onClick={handleReset}
+            >
+              Reset
+            </button>
           </div>
         </div>
       </PopoverContent>

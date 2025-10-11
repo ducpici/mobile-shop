@@ -1,12 +1,13 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { Lock, UserRound } from "lucide-react";
+import { Lock, UserRound, Eye, EyeClosed } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
   const router = useRouter();
+  const [isViewPass, setIsViewPass] = useState(false);
   return (
     <div className="flex h-screen w-full items-center justify-center bg-linear-to-t from-[#0093E9] to-[#01AEEF]">
       <div className="h-150 w-100 space-y-4 p-4">
@@ -31,12 +32,26 @@ const Page = () => {
             <div className="absolute top-1/2 left-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#01AEEF] p-2">
               <Lock className="text-white" size={15} />
             </div>
-
             <input
               className="w-full rounded bg-white px-16 py-3"
-              type="password"
+              type={isViewPass ? "text" : "password"}
               placeholder="Password"
             />
+            {isViewPass ? (
+              <div
+                className="absolute top-1/2 right-0 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full p-1 text-[#01AEEF]"
+                onClick={() => setIsViewPass(!isViewPass)}
+              >
+                <Eye className="text-[#01AEEF]" size={20} />
+              </div>
+            ) : (
+              <div
+                className="absolute top-1/2 right-0 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full p-1 text-[#01AEEF]"
+                onClick={() => setIsViewPass(!isViewPass)}
+              >
+                <EyeClosed className="text-[#01AEEF]" size={20} />
+              </div>
+            )}
           </div>
         </div>
         <div className="flex justify-between text-sm text-gray-200">

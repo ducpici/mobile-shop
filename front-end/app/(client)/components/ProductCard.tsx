@@ -5,8 +5,9 @@ import { Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
-import { addToCart } from "@/helpers/cartLocalStorage";
+import { addToCart } from "@/redux/cartSlice";
 import { toast } from "sonner";
+import { useAppDispatch } from "@/hooks/storeHook";
 
 type ProductCardProps = {
   product: Product;
@@ -15,11 +16,13 @@ type ProductCardProps = {
 export const ProductCard = ({ product }: ProductCardProps) => {
   const user = false;
   const router = useRouter();
+  const dispatch = useAppDispatch();
+
   const handleAddToCart = (product_id: number) => {
     if (user) {
       //Call API add to cart
     } else {
-      addToCart(product_id);
+      dispatch(addToCart(product_id));
       toast("Product added to your cart", {
         action: {
           label: "Go to cart",
@@ -39,9 +42,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       </Link>
 
       <div className="">
-        <div className="line-clamp-2 h-[36px] text-xs font-bold md:h-[42px] md:text-sm">
-          {product.name}
-        </div>
+        <div className="line-clamp-2 text-xs font-bold md:text-sm">{product.name}</div>
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-red-600 md:text-base">
             {product.price.toLocaleString("vi-VN")}₫
