@@ -21,7 +21,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
             collapsed ? "md:pl-20" : "md:pl-64"
           }`}
         >
-          <div className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 relative h-full min-h-[200px] overflow-y-auto p-2 md:p-4">
+          <div className="max-w-8xl mx-auto flex h-full flex-col p-2">
             <LoadingSpinner />
             {children}
           </div>

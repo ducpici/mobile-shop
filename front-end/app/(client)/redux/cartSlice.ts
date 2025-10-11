@@ -59,9 +59,11 @@ const cartSlice = createSlice({
     },
 
     removeProduct(state, action: PayloadAction<number>) {
-      const newState = state.filter((i) => i.product_id !== action.payload);
-      saveCart(newState);
-      return newState;
+      const index = state.findIndex((i) => i.product_id === action.payload);
+      if (index !== -1) {
+        state.splice(index, 1);
+      }
+      saveCart(state);
     },
   },
 });

@@ -56,9 +56,9 @@ const Page = () => {
   return (
     <div>
       <BreadCrumb link="/profile" name="Profile" />
-      <div className="mx-auto mt-10 max-w-7xl rounded p-6 shadow-lg">
+      <div className="">
         <div className="flex items-center justify-between">
-          <h1 className="mb-6 text-3xl font-bold">My Profile</h1>
+          <h1 className="mb-6 font-bold md:text-2xl">My Profile</h1>
           <button
             className="flex cursor-pointer items-center gap-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             onClick={() => {

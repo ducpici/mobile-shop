@@ -74,7 +74,7 @@ const Sidebar = () => {
 
       {/* Mobile */}
       <div
-        className={`fixed top-[60px] left-0 z-20 flex min-h-screen w-64 transform flex-col bg-amber-50 p-4 shadow-md transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed top-[60px] left-0 z-40 flex min-h-screen w-64 transform flex-col bg-amber-50 p-4 shadow-md transition-transform duration-300 ease-in-out md:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

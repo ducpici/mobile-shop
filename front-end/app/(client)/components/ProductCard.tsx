@@ -42,9 +42,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       </Link>
 
       <div className="">
-        <div className="line-clamp-2 h-[36px] text-xs font-bold md:h-[42px] md:text-sm">
-          {product.name}
-        </div>
+        <div className="line-clamp-2 text-xs font-bold md:text-sm">{product.name}</div>
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-red-600 md:text-base">
             {product.price.toLocaleString("vi-VN")}₫

@@ -30,13 +30,13 @@ const ProductSearch = ({ value, onSearch }: ProductSrearchProps) => {
   };
 
   return (
-    <div className="relative flex w-full items-center md:w-1/3">
+    <div className="relative flex w-full items-center">
       <input
         type="text"
         placeholder="Search..."
         value={dataSearch}
         onChange={handleChange}
-        className="w-full rounded border border-gray-400 px-4 py-2 focus:outline-none"
+        className="w-full rounded border border-gray-300 px-4 py-2 focus:outline-none"
       />
       <Search className="absolute right-4 text-gray-500" />
     </div>
