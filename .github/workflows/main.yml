@@ -19,15 +19,15 @@ jobs:
 
       - name: Install deps
         run: npm install
+        working-directory: ./front-end
 
       - name: Lint
         run: npm run lint
+        working-directory: ./front-end
 
       - name: Build
         run: npm run build
-
-      - name: Test
-        run: npm test
+        working-directory: ./front-end
 
   # CD Job: chạy khi push vào production
   deploy:

@@ -3,27 +3,29 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { User, Menu, X, Package, LogIn, LogOut, FileUser } from "lucide-react";
-import { useSidebar } from "@/contexts/SidebarContext";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useAppSelector, useAppDispatch } from "@/hooks/storeHook";
+import { setMobileOpen } from "@/redux/sidebarSlice";
 
 const Header = () => {
-  const { collapsed, setCollapsed } = useSidebar();
+  const dispatch = useAppDispatch();
+  const mobileOpen = useAppSelector((state) => state.sidebar.mobileOpen);
   const [openUserDropDown, setOpenUserDropDown] = useState(false);
   const isLogin = true;
   return (
     <div className="sticky top-0 z-999 flex h-[60px] w-full flex-shrink-0 items-center justify-between bg-[#C6E5F4] px-2 shadow-md md:px-4">
       <div className="menu block transition-[transform] duration-300 ease-in-out md:hidden">
-        {collapsed ? (
+        {mobileOpen ? (
           <X
             size={25}
             className="inline-block cursor-pointer"
-            onClick={() => setCollapsed(false)}
+            onClick={() => dispatch(setMobileOpen(false))}
           />
         ) : (
           <Menu
             size={25}
             className="inline-block cursor-pointer"
-            onClick={() => setCollapsed(true)}
+            onClick={() => dispatch(setMobileOpen(true))}
           />
         )}
       </div>

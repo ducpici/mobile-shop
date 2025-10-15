@@ -5,8 +5,11 @@ import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
 import { products } from "@/datas/products";
 import RatingStars from "@/components/RatingStars";
-import { addToCart } from "@/(client)/helpers/cartLocalStorage";
+import Link from "next/link";
 import { toast } from "sonner";
+import { ShoppingCart } from "lucide-react";
+import { addToCart } from "@/redux/cartSlice";
+import { useAppDispatch } from "@/hooks/storeHook";
 
 const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = React.use(params);
@@ -16,12 +19,16 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const user = false;
   const router = useRouter();
+  const images: string[] = [product?.mainImage, ...(product?.images ?? [])].filter(
+    (img): img is string => typeof img === "string",
+  );
+  const dispatch = useAppDispatch();
 
   const handleAddToCart = (product_id: number) => {
     if (user) {
       //Call API add to cart
     } else {
-      addToCart(product_id);
+      dispatch(addToCart(product_id));
       toast("Product added to your cart", {
         action: {
           label: "Go to cart",
@@ -37,26 +44,36 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   }
   return (
     <div>
-      <BreadCrumb link={`/product/${slug}`} name="Product" />
-      <div className="mx-auto min-h-screen max-w-7xl rounded bg-white p-2 shadow-lg md:mt-10">
+      <div className="flex items-center justify-between">
+        <BreadCrumb link={`/product/${slug}`} name="Product" />
+        <div className="relative">
+          <Link href={"/cart"}>
+            <ShoppingCart />
+          </Link>
+
+          <div className="absolute top-0 right-0 flex items-center justify-center rounded-full bg-red-500 text-white"></div>
+        </div>
+      </div>
+
+      <div className="">
         <div className="flex flex-col gap-6 md:flex-row">
           <div className="">
             <div className="flex w-full items-center justify-center rounded-lg border border-gray-300 p-4 md:w-100">
-              <Image src={viewImage} alt={product.name} width={400} height={300} />
+              <Image src={viewImage} alt={product.name} width={400} height={400} />
             </div>
             <div className="mt-2 flex justify-center gap-2">
-              {product.images?.map((_, index) => (
+              {images?.map((_, index) => (
                 <div
                   key={index}
                   className={`cursor-pointer rounded p-1 hover:outline-1 hover:outline-gray-400 ${selectedImageIndex == index ? "outline-1 outline-gray-400" : ""}`}
                   onClick={() => {
-                    setViewImage(product.images[index]);
+                    setViewImage(images[index]);
                     setSelectedImageIndex(index);
                   }}
                 >
                   <Image
                     key={index}
-                    src={product.images[index]}
+                    src={images[index]}
                     alt={product.name}
                     width={40}
                     height={40}
@@ -65,10 +82,10 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
               ))}
             </div>
           </div>
-          <div className="content space-y-2">
+          <div className="content space-y-3 md:space-y-4">
             <h2 className="text-xl font-bold md:text-2xl">{product.name}</h2>
             <div className="relative">
-              <p className={`text-justify ${isViewMore ? "" : "line-clamp-3"}`}>
+              <p className={`text-justify ${isViewMore ? "" : "line-clamp-4 md:line-clamp-3"}`}>
                 {product.description}
               </p>
               <span
@@ -80,8 +97,8 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
             </div>
 
             <div className="flex items-center">
-              <span className="w-20 font-semibold">Price:</span>
-              <span className="text-xl font-semibold">
+              {/* <span className="w-20 font-semibold">Price:</span> */}
+              <span className="text-2xl font-semibold">
                 {product.price.toLocaleString("vi-VN")} ₫
               </span>
             </div>
@@ -99,11 +116,11 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
             </div>
 
             <div className="mt-2 flex items-center justify-center gap-4 md:ml-4">
-              <button className="cursor-pointer rounded bg-[#00C2FF] px-3 py-2 font-semibold text-white">
+              <button className="cursor-pointer rounded bg-[#00C2FF] px-3 py-2 text-lg font-semibold text-white">
                 Buy now
               </button>
               <button
-                className="cursor-pointer rounded bg-[#00FF19] px-3 py-2 font-semibold text-white"
+                className="cursor-pointer rounded bg-[#00FF19] px-3 py-2 text-lg font-semibold text-white"
                 onClick={() => {
                   handleAddToCart(product.id);
                 }}
