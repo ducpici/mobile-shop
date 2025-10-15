@@ -9,7 +9,7 @@ services:
       - "4000:4000"
     environment:
       - NODE_ENV=production
-      - API_URL=http://json-server:4003 # Gọi tới service json-server
+      - NEXT_PUBLIC_API_URL=http://json-server:4003 # Gọi tới service json-server
     depends_on:
       - json-server
   json-server:
@@ -20,7 +20,7 @@ services:
       - ./json-server/db.json:/app/db.json # Mount db.json từ host
     command: >
       sh -c "npm install -g json-server &&
-             json-server --watch db.json --host 0.0.0.0 --port 5000"
+             json-server --watch db.json --host 0.0.0.0 --port 4003"
     ports:
       - "4003:4003"
     restart: always
