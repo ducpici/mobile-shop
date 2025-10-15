@@ -9,7 +9,7 @@ services:
       - "4000:4000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://json-server:4003 # Gọi tới service json-server
+      - NEXT_PUBLIC_API_URL=https://jsonserver.westore.site:4003 # Gọi tới service json-server
     depends_on:
       - json-server
   json-server:
