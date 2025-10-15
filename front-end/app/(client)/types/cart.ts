@@ -18,4 +18,14 @@ export type LocalCartItem = {
   quantity: number;
 };
 
+// Dạng chuẩn hóa, dùng cho UI, Redux, tính tổng, v.v.
+export type UnifiedCartItem = {
+  product_id: number;
+  quantity: number;
+  product: Product; // luôn có product để render
+  source: "local" | "server"; // biết item đến từ đâu (debug, merge, sync)
+};
+
+export type UserCart = CartItem[];
 export type LocalCart = LocalCartItem[];
+export type UnifiedCart = UnifiedCartItem[];

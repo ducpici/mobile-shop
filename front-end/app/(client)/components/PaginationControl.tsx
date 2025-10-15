@@ -13,9 +13,9 @@ import { setPage } from "@/redux/productSlice";
 
 const PaginationControl = () => {
   const dispatch = useAppDispatch();
-  const { currentPage, filteredProducts, itemsPerPage } = useAppSelector((state) => state.product);
+  const { currentPage, allProducts, itemsPerPage } = useAppSelector((state) => state.product);
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(allProducts.length / itemsPerPage);
 
   if (totalPages <= 1) return null;
 
