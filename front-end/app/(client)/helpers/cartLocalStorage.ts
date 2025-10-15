@@ -65,3 +65,7 @@ export function decreaseQuantity(product_id: number) {
   saveCart(cart);
   return cart;
 }
+
+export function clearCartStorage() {
+  localStorage.removeItem(CART_KEY);
+}

@@ -6,12 +6,12 @@ const LoadingSpinner = () => {
   if (!isLoading) return null;
 
   return (
-    // <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-    //   <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-transparent" />
-    // </div>
-    <div className="absolute inset-0 z-50 flex items-center justify-center">
+    <div className="flex h-full w-full items-center justify-center">
       <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-transparent" />
     </div>
+    // <div className="absolute inset-0 z-50 flex items-center justify-center">
+    //   <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-transparent" />
+    // </div>
   );
 };
 

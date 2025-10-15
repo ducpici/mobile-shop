@@ -22,14 +22,9 @@ import {
   setMaxStar,
   resetFilters,
 } from "@/redux/filterSlice";
-import { FilterValues } from "@/types/filters";
+import { setSearchValue } from "@/redux/searchSlice";
 
-type ProductFiltersProps = {
-  onFilter: (filters: FilterValues) => void;
-  onReset: () => void;
-};
-
-const ProductFilters = ({ onFilter, onReset }: ProductFiltersProps) => {
+const ProductFilters = () => {
   const dispatch = useAppDispatch();
   const filters = useAppSelector((state) => state.filter);
 
@@ -43,13 +38,12 @@ const ProductFilters = ({ onFilter, onReset }: ProductFiltersProps) => {
   const starOptions = [0, 1, 2, 3, 4, 5];
 
   const handleApply = () => {
-    onFilter(filters);
     setOpenFilter(false);
   };
 
   const handleReset = () => {
     dispatch(resetFilters());
-    onReset();
+    dispatch(setSearchValue(""));
     setOpenFilter(false);
   };
 

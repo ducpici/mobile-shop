@@ -14,9 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CartItem } from "../types/cart";
-import { products } from "@/datas/products";
-import { joinProductToCartItem } from "@/utils/joinProductToCartItem";
+import { CartItem } from "@/types/cart";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import {
@@ -24,59 +22,84 @@ import {
   increaseQuantity,
   decreaseQuantity,
   updateQuantity,
+  fetchUserCart,
+  deleteUserCart,
 } from "@/redux/cartSlice";
-import { showLoading, hideLoading } from "@/redux/loadingSlice";
-import { selectCartItemCount } from "../redux/selectCart";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { joinProductToCartLocal, joinProductToCartUser } from "@/helpers/cartUtils";
+import { selectCartItemCount } from "@/redux/selectors/cartSelectors";
+import { updateUserCartQuantity } from "@/redux/cartSlice";
+import { calculateCartTotals } from "@/helpers/cartUtils";
+import { hideLoading } from "@/redux/loadingSlice";
 
 const Page = () => {
+  const { userCart, localCart } = useAppSelector((state) => state.cart);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [subtotal, setSubTotal] = useState<number>(0);
-  const tax = (subtotal / 100) * 10;
-  const total = subtotal + tax;
-  const user = false;
+  const { subtotal, tax, total } = calculateCartTotals(cartItems);
+
   const dispatch = useAppDispatch();
-  const cart = useAppSelector((state) => state.cart);
+  const { allProducts: products } = useAppSelector((state) => state.product);
+  const { user } = useAppSelector((state) => state.auth);
+
   const isLoading = useAppSelector((state) => state.loading.isLoading);
   const [openDialogId, setOpenDialogId] = useState<number | null>(null);
   const itemCount = useAppSelector(selectCartItemCount);
 
   useEffect(() => {
-    dispatch(showLoading());
-    setTimeout(() => {
-      dispatch(hideLoading());
-    }, 500);
-  }, [dispatch]);
-
-  useEffect(() => {
     if (user) {
-      // Call API get cart from user);
+      dispatch(fetchUserCart(user.id));
     } else {
-      // Guest → load từ localStorage
-      setCartItems(joinProductToCartItem(cart));
+      dispatch(hideLoading());
     }
-  }, [user, cart, dispatch]);
+  }, [user, products, dispatch]);
 
   useEffect(() => {
-    const total = cartItems.reduce((acc, item) => {
-      const product = products.find((p) => p.id === item.product_id);
-      if (product) {
-        return acc + item.quantity * product.price;
-      }
-      return acc;
-    }, 0);
-    setSubTotal(total);
-  }, [cartItems]);
+    // user đã login -> fetch user cart
+    if (user) {
+      // dispatch(fetchUserCart({ user_id: user.id, products }));
+      setCartItems(joinProductToCartUser(userCart, products));
+    } else {
+      // user chưa login -> lấy cart từ localStorage
+      setCartItems(joinProductToCartLocal(localCart, products));
+    }
+  }, [userCart, localCart, products, user]);
 
   const handleDecreaseQuantity = (product_id: number) => {
-    dispatch(decreaseQuantity(product_id));
+    if (user) {
+      const cartItem = userCart.find((i) => Number(i.product_id) === Number(product_id));
+      if (!cartItem) return;
+      if (cartItem.quantity > 1) {
+        dispatch(
+          updateUserCartQuantity({ cartItemId: cartItem.id, quantity: cartItem.quantity - 1 }),
+        );
+      }
+    } else {
+      dispatch(decreaseQuantity(product_id));
+    }
   };
 
   const handleIncreaseQuantity = (product_id: number) => {
-    dispatch(increaseQuantity(product_id));
+    if (user) {
+      const cartItem = userCart.find((i) => Number(i.product_id) === Number(product_id));
+      if (!cartItem) return;
+      dispatch(
+        updateUserCartQuantity({ cartItemId: cartItem.id, quantity: cartItem.quantity + 1 }),
+      );
+      console.log("CartItemId:", cartItem.id);
+      console.log("NewQuaniy:", cartItem.quantity);
+    } else {
+      dispatch(increaseQuantity(product_id));
+    }
   };
 
   const handleRemoveProduct = (product_id: number) => {
-    dispatch(removeProduct(product_id));
+    if (user) {
+      const cartItem = userCart.find((i) => Number(i.product_id) === Number(product_id));
+      if (!cartItem) return;
+      dispatch(deleteUserCart(cartItem.id));
+    } else {
+      dispatch(removeProduct(product_id));
+    }
   };
 
   const handleInputQuantity = (product_id: number, quantity: number) => {
@@ -88,7 +111,7 @@ const Page = () => {
       <BreadCrumb link="/cart" name="Cart" />
       <div className="flex h-full flex-col gap-10 space-y-4 md:flex-row">
         {isLoading ? (
-          <></>
+          <LoadingSpinner />
         ) : (
           <>
             {cartItems.length == 0 ? (
@@ -102,7 +125,7 @@ const Page = () => {
                     <h2 className="mb-2 font-bold md:mb-4 md:text-2xl">My Cart</h2>
                     <p className="text-right text-sm">{itemCount} items in bag</p>
                   </div>
-                  <div className="product-list scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 mb-[300px] h-full flex-1 space-y-2 overflow-y-auto md:mb-10 md:h-svh md:space-y-4">
+                  <div className="product-list scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 mb-[250px] h-full flex-1 space-y-2 overflow-y-auto md:mb-10 md:h-svh md:space-y-4">
                     {cartItems.map((item) => {
                       if (!item.product) return null;
                       const product = item.product;
@@ -208,10 +231,10 @@ const Page = () => {
                     })}
                   </div>
                 </div>
-                <div className="fixed bottom-0 left-0 z-1 w-full border-t bg-white px-3 py-3 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 md:static md:flex-1/3 md:border-none md:px-0 md:py-0 md:shadow-none">
+                <div className="fixed bottom-0 left-0 z-1 w-full border-t bg-white p-2 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 md:static md:flex-1/3 md:border-none md:p-3 md:px-0 md:py-0 md:shadow-none">
                   {/* <div className="w-full border-t bg-white px-3 py-3 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 md:static md:flex-1/3 md:border-none md:px-0 md:py-0 md:shadow-none"> */}
                   <h2 className="mb-2 font-bold md:mb-4 md:text-2xl">Order information</h2>
-                  <div className="space-y-2">
+                  <div className="md:space-y-2">
                     <div>
                       <div className="flex items-center justify-between">
                         <span>Sub Total:</span>

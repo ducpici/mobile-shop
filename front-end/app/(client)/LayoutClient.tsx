@@ -4,8 +4,9 @@ import Sidebar from "@/components/Sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import store from "@/redux/store";
 import { useAppSelector } from "@/hooks/storeHook";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import { Provider } from "react-redux";
+import { persistor } from "@/redux/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
   const collapsed = useAppSelector((state) => state.sidebar.collapsed);
@@ -21,8 +22,8 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
             collapsed ? "md:pl-20" : "md:pl-64"
           }`}
         >
-          <div className="max-w-8xl mx-auto flex h-full flex-col p-2">
-            <LoadingSpinner />
+          <div className="max-w-8xl mx-auto flex h-full flex-col p-2 md:p-4">
+            {/* <LoadingSpinner /> */}
             {children}
           </div>
         </main>
@@ -34,7 +35,9 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
-      <LayoutContent>{children}</LayoutContent>
+      <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+        <LayoutContent>{children}</LayoutContent>
+      </PersistGate>
     </Provider>
   );
 }

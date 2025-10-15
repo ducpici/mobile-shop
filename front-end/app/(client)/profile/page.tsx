@@ -1,11 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
 import { UserPen, CircleX, Calendar as CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import Modal from "@/components/ui/Modal";
-import { user } from "@/datas/user";
 import { User, GenderLabel, Gender } from "@/types/user";
 import { formatDate } from "../utils/formatDate";
 import { toast } from "sonner";
@@ -20,25 +19,28 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { format } from "date-fns";
-import { updateProfile } from "@/redux/profileSlice";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { fetchUserProfile, updateUserProfile } from "@/redux/profileSlice";
+import { CartBadge } from "@/components/CartBadge";
+import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { hideLoading } from "@/redux/loadingSlice";
 
 const Page = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userData, setUserData] = useState(user as User);
   const [open, setOpen] = React.useState(false);
   const [openGender, setOpenGender] = React.useState(false);
   const genders = [
     { value: Gender.Male, label: "Male" },
     { value: Gender.Female, label: "Female" },
   ];
-  const profile = useSelector((state: RootState) => state.profile);
+  const { userProfile: profile, isLoading } = useAppSelector((state) => state.profile);
+  const [userData, setUserData] = useState<User | null>(profile);
+  const { user } = useAppSelector((state) => state.auth);
 
   const handleSave = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!userData) return;
     if (
       userData.name == "" ||
       userData.email == "" ||
@@ -49,221 +51,269 @@ const Page = () => {
       toast("Please fill full information");
       return;
     }
-    dispatch(updateProfile(userData));
+    dispatch(updateUserProfile(userData));
+    toast.success("Updated profile");
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      dispatch(fetchUserProfile(Number(user.id)));
+    } else {
+      console.warn("No userId found in localStorage");
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(hideLoading());
+      setUserData(null);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (profile) {
+      setUserData(profile);
+    }
+  }, [profile]);
+
   return (
-    <div>
-      <BreadCrumb link="/profile" name="Profile" />
-      <div className="">
-        <div className="flex items-center justify-between">
-          <h1 className="mb-6 font-bold md:text-2xl">My Profile</h1>
-          <button
-            className="flex cursor-pointer items-center gap-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-            onClick={() => {
-              setIsModalOpen(true);
-            }}
-          >
-            <UserPen className="" />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-6">
-          <Image src="/images/user.png" alt="avatar" width={80} height={80} />
-          <div>
-            <h2 className="text-2xl font-bold">{profile.name}</h2>
-            <p className="text-gray-600">Email: {profile.email}</p>
-          </div>
-        </div>
-        <div className="mt-6 space-y-6 text-sm">
-          <div className="flex items-center">
-            <span className="w-40 font-medium">Date of birth:</span>
-            <div className="flex items-center gap-2">
-              <span className="flex-1">{formatDate(profile.dob.toString())}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center">
-            <span className="w-40 font-medium">Sex:</span>
-            <div className="flex items-center gap-2">
-              <span className="flex-1">{GenderLabel[profile.gender]}</span>
-            </div>
-          </div>
-
-          <div className="flex items-start">
-            <span className="w-40 font-medium">Address Company:</span>
-            <p className="flex-1">{profile.companyAddress}</p>
-          </div>
-
-          <div className="flex items-start">
-            <span className="w-40 font-medium">Address Home:</span>
-            <p className="flex-1">{profile.homeAddress}</p>
-          </div>
-        </div>
+    <div className="h-full">
+      <div className="flex items-center justify-between">
+        <BreadCrumb link="/profile" name="Profile" />
+        <CartBadge />
       </div>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Edit Profile</h2>
-          <CircleX
-            className="cursor-pointer hover:text-red-500"
-            onClick={() => setIsModalOpen(false)}
-          />
-        </div>
-        <form className="space-y-2 md:space-y-4">
-          <div>
-            <label className="mb-1 block font-medium">Name:</label>
-            <input
-              type="text"
-              defaultValue={userData.name}
-              className="w-full rounded border border-gray-300 p-2"
-              onChange={(e) => {
-                setUserData({
-                  ...userData,
-                  name: e.target.value,
-                });
-              }}
-            />
-          </div>
-          <div>
-            <label className="mb-1 block font-medium">Email:</label>
-            <input
-              type="text"
-              defaultValue={userData.email}
-              className="w-full rounded border border-gray-300 p-2"
-              onChange={(e) => {
-                setUserData({
-                  ...userData,
-                  email: e.target.value,
-                });
-              }}
-            />
-          </div>
-          <div className="flex space-x-5">
-            <div>
-              <label className="mb-1 block font-medium">Date of birth:</label>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild className="w-fit">
-                  <Button
-                    variant="outline"
-                    id="date"
-                    className="justify-between rounded border-gray-300 font-normal"
-                  >
-                    {userData.dob ? formatDate(userData.dob.toString()) : "Select date"}
-                    <CalendarIcon />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="z-[1000] w-auto overflow-hidden p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={userData.dob ? new Date(userData.dob) : undefined}
-                    captionLayout="dropdown"
-                    onSelect={(date) => {
-                      if (date) {
-                        setUserData({
-                          ...userData,
-                          dob: format(date, "yyyy-MM-dd"),
-                        });
-                      }
-                      setOpen(false);
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>{" "}
-            <div>
-              <label className="mb-1 block font-medium">Sex:</label>
-              <Popover open={openGender} onOpenChange={setOpenGender}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className="w-fit justify-between rounded border-gray-300 font-normal"
-                  >
-                    {GenderLabel[userData.gender] ?? "Select gender..."}
-                    <ChevronsUpDown className="opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="z-[1000] w-[200px] p-0">
-                  <Command>
-                    <CommandList>
-                      <CommandEmpty>No gender found.</CommandEmpty>
-                      <CommandGroup>
-                        {genders.map((g) => (
-                          <CommandItem
-                            key={g.value}
-                            value={g.label}
-                            onSelect={() => {
-                              setUserData({
-                                ...userData,
-                                gender: g.value, // 👈 lưu về số 0 | 1
-                              });
-                              setOpenGender(false);
-                            }}
-                          >
-                            {g.label}
-                            {userData.gender === g.value && <Check className="ml-auto h-4 w-4" />}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+      <div className="h-full">
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : !profile ? (
+          <p className="text-center">Not found!</p>
+        ) : (
+          <div className="">
+            <div className="flex items-center justify-between">
+              <h1 className="mb-6 font-bold md:text-2xl">My Profile</h1>
+            </div>
+
+            <div className="flex items-center justify-between gap-6">
+              <div className="flex items-center">
+                <Image src="/images/user.png" alt="avatar" width={80} height={80} />
+                <div>
+                  <h2 className="text-2xl font-bold">{profile.name}</h2>
+                  <p className="text-gray-600">Email: {profile.email}</p>
+                </div>
+              </div>
+
+              <button
+                className="flex cursor-pointer items-center gap-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+              >
+                <UserPen />
+              </button>
+            </div>
+            <div className="mt-6 space-y-6 text-sm">
+              <div className="flex items-center">
+                <span className="w-40 font-medium">Date of birth:</span>
+                <div className="flex items-center gap-2">
+                  <span className="flex-1">
+                    {profile.dob ? formatDate(profile.dob.toString()) : <>Null</>}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <span className="w-40 font-medium">Sex:</span>
+                <div className="flex items-center gap-2">
+                  <span className="flex-1">
+                    {profile.gender ? GenderLabel[profile.gender] : <>Null</>}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <span className="w-40 font-medium">Address Company:</span>
+                <p className="flex-1">
+                  {profile.companyAddress ? profile.companyAddress : <>Null</>}
+                </p>
+              </div>
+
+              <div className="flex items-start">
+                <span className="w-40 font-medium">Address Home:</span>
+                <p className="flex-1">{profile.homeAddress ? profile.homeAddress : <>Null</>}</p>
+              </div>
             </div>
           </div>
-
-          <div>
-            <label className="mb-1 block font-medium">Address Company:</label>
-            <input
-              type="text"
-              defaultValue={userData.companyAddress}
-              className="w-full rounded border border-gray-300 p-2"
-              onChange={(e) => {
-                setUserData({
-                  ...userData,
-                  companyAddress: e.target.value,
-                });
-              }}
-            />
-          </div>
-          <div>
-            <label className="mb-1 block font-medium">Address Home:</label>
-            <input
-              type="text"
-              defaultValue={userData.homeAddress}
-              className="w-full rounded border border-gray-300 p-2"
-              onChange={(e) => {
-                setUserData({
-                  ...userData,
-                  homeAddress: e.target.value,
-                });
-              }}
-            />
-          </div>
-          <div>
-            <label className="mb-1 block font-medium">Avatar:</label>
-            <input
-              type="file"
-              className="w-full cursor-pointer rounded border border-gray-300 p-2"
-            />
-          </div>
-          <div className="flex items-center justify-end gap-2">
-            <button
-              className="cursor-pointer rounded bg-blue-500 p-2 text-white"
-              onClick={(e) => handleSave(e)}
-            >
-              Save
-            </button>
-            <button
-              className="cursor-pointer rounded bg-red-500 p-2 text-white"
+        )}
+      </div>
+      {userData ? (
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Edit Profile</h2>
+            <CircleX
+              className="cursor-pointer hover:text-red-500"
               onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </button>
+            />
           </div>
-        </form>
-      </Modal>
+          <form className="space-y-2 md:space-y-4">
+            <div>
+              <label className="mb-1 block font-medium">Name:</label>
+              <input
+                type="text"
+                defaultValue={userData.name}
+                className="w-full rounded border border-gray-300 p-2"
+                onChange={(e) => {
+                  setUserData({
+                    ...userData,
+                    name: e.target.value,
+                  });
+                }}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block font-medium">Email:</label>
+              <input
+                type="text"
+                defaultValue={userData.email}
+                className="w-full rounded border border-gray-300 p-2"
+                onChange={(e) => {
+                  setUserData({
+                    ...userData,
+                    email: e.target.value,
+                  });
+                }}
+              />
+            </div>
+            <div className="flex space-x-5">
+              <div>
+                <label className="mb-1 block font-medium">Date of birth:</label>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild className="w-fit">
+                    <Button
+                      variant="outline"
+                      id="date"
+                      className="justify-between rounded border-gray-300 font-normal"
+                    >
+                      {userData.dob ? formatDate(userData.dob.toString()) : "Select date"}
+                      <CalendarIcon />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="z-[1000] w-auto overflow-hidden p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={userData.dob ? new Date(userData.dob) : undefined}
+                      captionLayout="dropdown"
+                      onSelect={(date) => {
+                        if (date) {
+                          setUserData({
+                            ...userData,
+                            dob: format(date, "yyyy-MM-dd"),
+                          });
+                        }
+                        setOpen(false);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>{" "}
+              <div>
+                <label className="mb-1 block font-medium">Sex:</label>
+                <Popover open={openGender} onOpenChange={setOpenGender}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-fit justify-between rounded border-gray-300 font-normal"
+                    >
+                      {GenderLabel[userData.gender] ?? "Select gender..."}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="z-[1000] w-[200px] p-0">
+                    <Command>
+                      <CommandList>
+                        <CommandEmpty>No gender found.</CommandEmpty>
+                        <CommandGroup>
+                          {genders.map((g) => (
+                            <CommandItem
+                              key={g.value}
+                              value={g.label}
+                              onSelect={() => {
+                                setUserData({
+                                  ...userData,
+                                  gender: g.value, // 👈 lưu về số 0 | 1
+                                });
+                                setOpenGender(false);
+                              }}
+                            >
+                              {g.label}
+                              {userData.gender === g.value && <Check className="ml-auto h-4 w-4" />}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1 block font-medium">Address Company:</label>
+              <input
+                type="text"
+                defaultValue={userData.companyAddress}
+                className="w-full rounded border border-gray-300 p-2"
+                onChange={(e) => {
+                  setUserData({
+                    ...userData,
+                    companyAddress: e.target.value,
+                  });
+                }}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block font-medium">Address Home:</label>
+              <input
+                type="text"
+                defaultValue={userData.homeAddress}
+                className="w-full rounded border border-gray-300 p-2"
+                onChange={(e) => {
+                  setUserData({
+                    ...userData,
+                    homeAddress: e.target.value,
+                  });
+                }}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block font-medium">Avatar:</label>
+              <input
+                type="file"
+                className="w-full cursor-pointer rounded border border-gray-300 p-2"
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                className="cursor-pointer rounded bg-blue-500 p-2 text-white"
+                onClick={(e) => handleSave(e)}
+              >
+                Save
+              </button>
+              <button
+                className="cursor-pointer rounded bg-red-500 p-2 text-white"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

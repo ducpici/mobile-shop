@@ -6,12 +6,24 @@ import { User, Menu, X, Package, LogIn, LogOut, FileUser } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAppSelector, useAppDispatch } from "@/hooks/storeHook";
 import { setMobileOpen } from "@/redux/sidebarSlice";
+import { logoutUser, clearAuthUser } from "@/redux/authSlice";
+import { clearUserCart } from "@/redux/cartSlice";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const mobileOpen = useAppSelector((state) => state.sidebar.mobileOpen);
   const [openUserDropDown, setOpenUserDropDown] = useState(false);
-  const isLogin = true;
+  const { user } = useAppSelector((state) => state.auth);
+
+  const handleLogout = async () => {
+    dispatch(logoutUser());
+    dispatch(clearAuthUser());
+    dispatch(clearUserCart());
+    router.push("/");
+  };
+
   return (
     <div className="sticky top-0 z-999 flex h-[60px] w-full flex-shrink-0 items-center justify-between bg-[#C6E5F4] px-2 shadow-md md:px-4">
       <div className="menu block transition-[transform] duration-300 ease-in-out md:hidden">
@@ -74,14 +86,17 @@ const Header = () => {
               </li>
               <li className="border-t border-gray-300"></li>
               <li>
-                {isLogin ? (
-                  <Link
-                    href="/login"
+                {user ? (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setOpenUserDropDown(false);
+                    }}
                     className="flex min-w-40 cursor-pointer items-center gap-2 rounded p-2 text-red-500 hover:bg-gray-200"
                   >
                     <LogOut />
                     <span>Logout</span>
-                  </Link>
+                  </button>
                 ) : (
                   <Link
                     href="/login"

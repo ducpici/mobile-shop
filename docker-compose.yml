@@ -7,3 +7,20 @@ services:
     restart: always
     ports:
       - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://json-server:4003 # Gọi tới service json-server
+    depends_on:
+      - json-server
+  json-server:
+    image: node:18-alpine
+    container_name: json-server
+    working_dir: /app
+    volumes:
+      - ./json-server/db.json:/app/db.json # Mount db.json từ host
+    command: >
+      sh -c "npm install -g json-server &&
+             json-server --watch db.json --host 0.0.0.0 --port 5000"
+    ports:
+      - "4003:4003"
+    restart: always

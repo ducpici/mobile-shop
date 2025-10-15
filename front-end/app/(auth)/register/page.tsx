@@ -1,11 +1,34 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import { Lock, UserRound, Eye, EyeClosed } from "lucide-react";
+import { Lock, UserRound, Eye, EyeClosed, Mail } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/hooks/storeHook";
+import { toast } from "sonner";
+import { registerUser } from "@/redux/authSlice";
 
 const Page = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const [isViewPass, setIsViewPass] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const handleRegister = async () => {
+    if (!name || !email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+    const resultAction = await dispatch(registerUser({ name, email, password }));
+
+    if (registerUser.fulfilled.match(resultAction)) {
+      toast.success("Your account has been created. Please sign in to continue.");
+      router.push("/login");
+    } else if (registerUser.rejected.match(resultAction)) {
+      toast.error(resultAction.payload as string);
+    }
+  };
   return (
     <div className="flex h-screen w-full items-center justify-center bg-linear-to-t from-[#0093E9] to-[#01AEEF]">
       <div className="h-150 w-100 space-y-4 p-4">
@@ -23,7 +46,20 @@ const Page = () => {
             <input
               className="w-full rounded bg-white px-16 py-3"
               type="text"
-              placeholder="Username"
+              placeholder="Name"
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div className="relative flex">
+            <div className="absolute top-1/2 left-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#01AEEF] p-2">
+              <Mail className="text-white" size={15} />
+            </div>
+
+            <input
+              className="w-full rounded bg-white px-16 py-3"
+              type="text"
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="relative flex">
@@ -34,6 +70,12 @@ const Page = () => {
               className="w-full rounded bg-white px-16 py-3"
               type={isViewPass ? "text" : "password"}
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleRegister();
+                }
+              }}
             />
             {isViewPass ? (
               <div
@@ -61,7 +103,10 @@ const Page = () => {
             Forgot password?
           </Link>
         </div>
-        <button className="w-full cursor-pointer rounded bg-transparent p-3 font-semibold text-white outline outline-white transition-all duration-300 hover:bg-white hover:text-[#0093E9]">
+        <button
+          className="w-full cursor-pointer rounded bg-transparent p-3 font-semibold text-white outline outline-white transition-all duration-300 hover:bg-white hover:text-[#0093E9]"
+          onClick={handleRegister}
+        >
           Register
         </button>
         <p className="text-center text-sm text-gray-200">

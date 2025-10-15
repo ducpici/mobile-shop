@@ -7,23 +7,34 @@ import Image from "next/image";
 import { Product } from "@/types/product";
 import { addToCart } from "@/redux/cartSlice";
 import { toast } from "sonner";
-import { useAppDispatch } from "@/hooks/storeHook";
+import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
+import { addUserCart } from "@/redux/cartSlice";
 
 type ProductCardProps = {
   product: Product;
 };
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const user = false;
+  const { user } = useAppSelector((state) => state.auth);
+
   const router = useRouter();
   const dispatch = useAppDispatch();
 
   const handleAddToCart = (product_id: number) => {
     if (user) {
       //Call API add to cart
+      dispatch(addUserCart({ user_id: user.id, product_id: product_id }));
+      toast.success("Product added to your cart", {
+        action: {
+          label: "Go to cart",
+          onClick: () => {
+            router.push("/cart");
+          },
+        },
+      });
     } else {
       dispatch(addToCart(product_id));
-      toast("Product added to your cart", {
+      toast.success("Product added to your cart", {
         action: {
           label: "Go to cart",
           onClick: () => {
@@ -37,7 +48,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     <div className="w-full max-w-sm overflow-hidden rounded-lg bg-white p-2 shadow-lg transition-shadow duration-200 hover:shadow-xl">
       <Link href={`/product/${product.id}`}>
         <div className="relative aspect-square w-full cursor-pointer transition-transform duration-300 hover:scale-102">
-          <Image className="object-cover p-2" src={product.mainImage} alt={product.name} fill />
+          <Image
+            className="object-cover p-2"
+            src={product.mainImage}
+            alt={product.name || "Product image"}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
         </div>
       </Link>
 
