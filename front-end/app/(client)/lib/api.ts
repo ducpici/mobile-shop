@@ -1,1 +1,1 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://jsonserver.westore.site:4003";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://jsonserver.westore.site";
