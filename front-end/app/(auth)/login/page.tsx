@@ -17,7 +17,6 @@ const Page = () => {
   const [isViewPass, setIsViewPass] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { user } = useAppSelector((state) => state.auth);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -27,14 +26,15 @@ const Page = () => {
     const resultAction = await dispatch(loginUser({ email, password }));
 
     if (loginUser.fulfilled.match(resultAction)) {
+      const loggedUser = resultAction.payload;
       const localCart = getCart();
-      if (localCart.length > 0) {
-        if (user) {
-          await dispatch(mergeLocalToServerCart({ user_id: user.id, localCart }));
-          await dispatch(fetchUserCart(user.id));
+      if (loggedUser) {
+        if (localCart.length > 0) {
+          await dispatch(mergeLocalToServerCart({ user_id: loggedUser.id, localCart }));
         }
+        await dispatch(fetchUserCart(loggedUser.id));
+        router.push("/");
       }
-      router.push("/");
     } else if (loginUser.rejected.match(resultAction)) {
       toast.error(resultAction.payload as string);
     }

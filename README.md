@@ -57,9 +57,17 @@ Dự án được thiết kế nhằm mô phỏng luồng người dùng cơ b�
 
 ### 1️⃣ Cài đặt
 
+Clone dự án
+
 ```bash
-git clone https://github.com/ducpici/MobileShop.git
-cd MobileShop
+git clone https://github.com/ducpici/mobile-shop.git
+cd mobile-shop
+```
+
+Tạo file .env.local trong thư mục front-end với nội dung
+
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:4003
 ```
 
 ### 2️⃣ Cài dependencies
@@ -67,6 +75,7 @@ cd MobileShop
 ```bash
 cd front-end
 npm install
+npm run dev
 ```
 
 ### 3️⃣ Chạy JSON Server
@@ -77,16 +86,18 @@ npm install
 npm start
 ```
 
-🐳 Chạy bằng Docker (tùy chọn)
+### 3️⃣🐳 Chạy bằng Docker (tùy chọn)
 
 ```bash
-docker-compose up --build
+docker-compose up -d --build
 ```
 
 Sau khi build thành công:
 
 - Next.js app: http://localhost:4000
 - JSON Server API: http://localhost:4003
+
+---
 
 ## 🌐 Triển khai (Deployment)
 

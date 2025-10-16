@@ -18,7 +18,7 @@ const initialState: ProductState = {
   selectedProduct: null,
   currentPage: 1,
   itemsPerPage: 12,
-  isLoading: true,
+  isLoading: false,
   isLoaded: false,
   error: null,
 };
@@ -69,6 +69,9 @@ export const productSlice = createSlice({
     setPage(state, action: PayloadAction<number>) {
       state.currentPage = action.payload;
     },
+    setIsloading(state, action) {
+      state.isLoading = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -104,6 +107,6 @@ export const productSlice = createSlice({
   },
 });
 
-export const { setPage } = productSlice.actions;
+export const { setPage, setIsloading } = productSlice.actions;
 
 export default productSlice.reducer;

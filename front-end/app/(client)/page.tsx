@@ -13,10 +13,12 @@ import { selectFilteredProducts } from "@/redux/selectors/productSelectors";
 import { toast } from "sonner";
 import { setPage } from "@/redux/productSlice";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { setIsloading } from "@/redux/productSlice";
 
 export default function Home() {
   const dispatch = useAppDispatch();
   const filteredProducts = useAppSelector(selectFilteredProducts);
+  const [displayedProducts, setDisplayedProducts] = useState(filteredProducts);
   const { currentPage, itemsPerPage, isLoaded, isLoading } = useAppSelector(
     (state) => state.product,
   );
@@ -24,7 +26,8 @@ export default function Home() {
   // Pagination
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-  const productList = filteredProducts.slice(start, end);
+
+  const productList = displayedProducts.slice(start, end);
 
   useEffect(() => {
     const justLoggedIn = localStorage.getItem("isLoggedIn");
@@ -50,6 +53,16 @@ export default function Home() {
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    dispatch(setIsloading(true));
+    const timeout = setTimeout(() => {
+      setDisplayedProducts(filteredProducts);
+      dispatch(setIsloading(false));
+    }, 500);
+    dispatch(setPage(1));
+    return () => clearTimeout(timeout);
+  }, [filteredProducts]);
 
   if (!mounted) {
     return (

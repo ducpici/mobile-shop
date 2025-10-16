@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
-import { useAppDispatch } from "@/hooks/storeHook";
+import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import { setSearchValue } from "@/redux/searchSlice";
 
 const ProductSearch = () => {
   const dispatch = useAppDispatch();
+  const searchValue = useAppSelector((state) => state.search.value);
   const [dataSearch, setDataSearch] = useState("");
+  useEffect(() => {
+    setDataSearch(searchValue);
+  }, [searchValue]);
   useEffect(() => {
     const timeout = setTimeout(() => {
       dispatch(setSearchValue(dataSearch.toLowerCase()));

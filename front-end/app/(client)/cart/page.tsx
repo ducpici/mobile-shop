@@ -125,7 +125,7 @@ const Page = () => {
                     <h2 className="mb-2 font-bold md:mb-4 md:text-2xl">My Cart</h2>
                     <p className="text-right text-sm">{itemCount} items in bag</p>
                   </div>
-                  <div className="product-list scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 mb-[250px] h-full flex-1 space-y-2 overflow-y-auto md:mb-10 md:h-svh md:space-y-4">
+                  <div className="product-list scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 mb-[200px] h-full flex-1 space-y-2 overflow-y-auto md:mb-10 md:h-svh md:space-y-4">
                     {cartItems.map((item) => {
                       if (!item.product) return null;
                       const product = item.product;
@@ -234,7 +234,7 @@ const Page = () => {
                 <div className="fixed bottom-0 left-0 z-1 w-full border-t bg-white p-2 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 md:static md:flex-1/3 md:border-none md:p-3 md:px-0 md:py-0 md:shadow-none">
                   {/* <div className="w-full border-t bg-white px-3 py-3 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 md:static md:flex-1/3 md:border-none md:px-0 md:py-0 md:shadow-none"> */}
                   <h2 className="mb-2 font-bold md:mb-4 md:text-2xl">Order information</h2>
-                  <div className="md:space-y-2">
+                  <div className="space-y-1 md:space-y-2">
                     <div>
                       <div className="flex items-center justify-between">
                         <span>Sub Total:</span>
@@ -248,13 +248,12 @@ const Page = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="font-bold">Total:</span>
-                        <span className="text-xl font-semibold text-red-500">
+                        <span className="text-base font-semibold text-red-500 md:text-xl">
                           {total.toLocaleString("vi")}₫
                         </span>
                       </div>
                     </div>
-
-                    <div>
+                    <div className="hidden md:block">
                       <ul className="list-disc pl-4 text-sm text-gray-500">
                         <li>Shipping charges will be calculated at checkout.</li>
                         <li>You can also enter a coupon code at the checkout page.</li>

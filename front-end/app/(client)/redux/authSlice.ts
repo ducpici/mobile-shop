@@ -52,9 +52,10 @@ export const loginUser = createAsyncThunk<User | null, { email: string; password
 );
 
 export const registerUser = createAsyncThunk<
-  User | null,
-  { name?: string; email: string; password: string }
->("auth/registerUser", async ({ name = "New User", email, password }, { rejectWithValue }) => {
+  string, // Kiểu dữ liệu trả về khi thành công
+  { name: string; email: string; password: string }, // Kiểu dữ liệu đầu vào
+  { rejectValue: string } // Kiểu dữ liệu reject
+>("auth/registerUser", async ({ name, email, password }, { rejectWithValue }) => {
   try {
     const checkRes = await fetch(`${API_URL}/users?email=${email}`, {
       cache: "no-store",
@@ -74,12 +75,14 @@ export const registerUser = createAsyncThunk<
     });
     if (!createRes.ok) return rejectWithValue("Failed to create account. Please try again later.");
 
-    const createdUser = await createRes.json();
-    return {
-      id: createdUser.id,
-      name: createdUser.name,
-      email: createdUser.email,
-    };
+    // const createdUser = await createRes.json();
+    // return {
+    //   id: createdUser.id,
+    //   name: createdUser.name,
+    //   email: createdUser.email,
+    // };
+
+    return "Account has been created";
   } catch (err) {
     console.error("Register error:", err);
     return rejectWithValue("Network error. Please check your connection.");

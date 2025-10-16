@@ -68,6 +68,24 @@
       "id": 1760584892908,
       "dob": "1967-10-05",
       "gender": 1
+    },
+    {
+      "name": "Đc",
+      "email": "we",
+      "password": "2",
+      "id": 1760598323851
+    },
+    {
+      "name": "Huy Hoàng",
+      "email": "hoang@gmail.com",
+      "password": "124",
+      "id": 1760598773166
+    },
+    {
+      "name": "Mai",
+      "email": "mai",
+      "password": "123",
+      "id": 1760604761354
     }
   ],
   "products": [
@@ -273,6 +291,10 @@
     {
       "user_id": 1760584892908,
       "id": 1760586654286
+    },
+    {
+      "user_id": 1760604761354,
+      "id": 1760604796717
     }
   ],
   "cartItems": [
@@ -295,24 +317,6 @@
       "id": 1760536611571
     },
     {
-      "cart_id": "1",
-      "product_id": "2",
-      "quantity": 1,
-      "id": 1760583873557
-    },
-    {
-      "cart_id": "1",
-      "product_id": "6",
-      "quantity": 1,
-      "id": 1760583873573
-    },
-    {
-      "cart_id": "1",
-      "product_id": "12",
-      "quantity": 2,
-      "id": 1760586324639
-    },
-    {
       "cart_id": 1760586654286,
       "product_id": "10",
       "quantity": 2,
@@ -332,9 +336,33 @@
     },
     {
       "cart_id": "1",
-      "product_id": "11",
+      "product_id": "3",
       "quantity": 1,
-      "id": 1760586938127
+      "id": 1760597604752
+    },
+    {
+      "cart_id": "1",
+      "product_id": "5",
+      "quantity": 1,
+      "id": 1760597644448
+    },
+    {
+      "cart_id": "1",
+      "product_id": "1",
+      "quantity": 1,
+      "id": 1760602299318
+    },
+    {
+      "cart_id": 1760604796717,
+      "product_id": "9",
+      "quantity": 2,
+      "id": 1760604796783
+    },
+    {
+      "cart_id": 1760604796717,
+      "product_id": "10",
+      "quantity": 2,
+      "id": 1760604799162
     }
   ]
 }

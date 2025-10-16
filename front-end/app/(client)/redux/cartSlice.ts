@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import type { UnifiedCartItem, LocalCart, UserCart, CartItem } from "@/types/cart";
+import type { LocalCart, UserCart, CartItem } from "@/types/cart";
 import { saveCart, clearCartStorage } from "@/helpers/cartLocalStorage";
 import { showLoading, hideLoading } from "./loadingSlice";
 import { API_URL } from "@/lib/api";
 
 interface CartState {
-  unifiedCart: UnifiedCartItem[];
   localCart: LocalCart;
   userCart: UserCart;
   isLoading: boolean;
@@ -13,7 +12,6 @@ interface CartState {
 }
 
 const initialState: CartState = {
-  unifiedCart: [],
   localCart: [],
   userCart: [],
   isLoading: false,
@@ -306,6 +304,7 @@ const cartSlice = createSlice({
       })
       .addCase(addUserCart.fulfilled, (state, action) => {
         state.isLoading = false;
+        console.log(action.payload);
         state.userCart = action.payload;
       })
       .addCase(addUserCart.rejected, (state, action) => {

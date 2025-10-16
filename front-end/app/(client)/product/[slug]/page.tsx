@@ -143,7 +143,13 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
               </div>
 
               <div className="mt-2 flex items-center justify-center gap-4 md:ml-4">
-                <button className="cursor-pointer rounded bg-[#00C2FF] px-3 py-2 text-lg font-semibold text-white">
+                <button
+                  className="cursor-pointer rounded bg-[#00C2FF] px-3 py-2 text-lg font-semibold text-white"
+                  onClick={() => {
+                    handleAddToCart(product.id);
+                    router.push("/cart");
+                  }}
+                >
                   Buy now
                 </button>
                 <button

@@ -5,5 +5,5 @@ export const selectCartItemCount = (state: RootState) => {
   const { user } = state.auth;
 
   const cart = user ? userCart : localCart;
-  return cart.length;
+  return cart.reduce((total, item) => total + item.quantity, 0);
 };
