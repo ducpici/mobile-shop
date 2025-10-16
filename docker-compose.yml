@@ -13,10 +13,14 @@ services:
     depends_on:
       - json-server
   json-server:
-    build: ./json-server
+    image: node:18-alpine
     container_name: json-server
+    working_dir: /app
     volumes:
-      - ./json-server/db.json:/app/db.json
+      - ./json-server/db.json:/app/db.json # Mount trực tiếp file db.json
+    command: >
+      sh -c "npm install -g json-server &&
+             json-server --host 0.0.0.0 --port 4003 --watch db.json"
     ports:
       - "4003:4003"
     restart: always
