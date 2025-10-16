@@ -27,14 +27,14 @@ const Page = () => {
     const resultAction = await dispatch(loginUser({ email, password }));
 
     if (loginUser.fulfilled.match(resultAction)) {
-      if (user) {
-        const localCart = getCart();
-        if (localCart.length > 0) {
+      const localCart = getCart();
+      if (localCart.length > 0) {
+        if (user) {
           await dispatch(mergeLocalToServerCart({ user_id: user.id, localCart }));
           await dispatch(fetchUserCart(user.id));
         }
-        router.push("/");
       }
+      router.push("/");
     } else if (loginUser.rejected.match(resultAction)) {
       toast.error(resultAction.payload as string);
     }

@@ -1,9 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { clearUserProfile } from "./profileSlice";
 import { API_URL } from "@/lib/api";
-import { fetchUserCart, mergeLocalToServerCart } from "./cartSlice";
-import { getCart } from "../helpers/cartLocalStorage";
-// import store from "./store";
 
 type User = {
   id: number;
@@ -33,7 +30,7 @@ const initialState: AuthState = {
 
 export const loginUser = createAsyncThunk<User | null, { email: string; password: string }>(
   "auth/loginUser",
-  async ({ email, password }, { dispatch, rejectWithValue }) => {
+  async ({ email, password }, { rejectWithValue }) => {
     try {
       const res = await fetch(`${API_URL}/users?email=${email}&password=${password}`, {
         cache: "no-store",
@@ -46,14 +43,6 @@ export const loginUser = createAsyncThunk<User | null, { email: string; password
       if (resData.length === 0) return rejectWithValue("Incorrect email or password.");
       const user = resData[0];
       const userData = { id: user.id, name: user.name, email: user.email };
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("isLoggedIn", "true");
-      // const localCart = getCart();
-      // if (localCart.length > 0) {
-      //   await dispatch(mergeLocalToServerCart({ user_id: userData.id, localCart }));
-      // }
-
-      // dispatch(fetchUserCart(userData.id));
       return userData;
     } catch (err) {
       console.error("Login error:", err);
@@ -126,6 +115,8 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload;
         state.status = "success";
+        localStorage.setItem("user", JSON.stringify(action.payload));
+        localStorage.setItem("isLoggedIn", "true");
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
