@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { clearUserProfile } from "./profileSlice";
 import { API_URL } from "@/lib/api";
-import { fetchUserCart } from "./cartSlice";
+import { fetchUserCart, mergeLocalToServerCart } from "./cartSlice";
+import { getCart } from "../helpers/cartLocalStorage";
+// import store from "./store";
 
 type User = {
   id: number;
@@ -46,7 +48,12 @@ export const loginUser = createAsyncThunk<User | null, { email: string; password
       const userData = { id: user.id, name: user.name, email: user.email };
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("isLoggedIn", "true");
-      dispatch(fetchUserCart(userData.id));
+      // const localCart = getCart();
+      // if (localCart.length > 0) {
+      //   await dispatch(mergeLocalToServerCart({ user_id: userData.id, localCart }));
+      // }
+
+      // dispatch(fetchUserCart(userData.id));
       return userData;
     } catch (err) {
       console.error("Login error:", err);
@@ -130,7 +137,7 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<User | null>) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.isLoading = false;
         state.user = null;
         state.status = "success";

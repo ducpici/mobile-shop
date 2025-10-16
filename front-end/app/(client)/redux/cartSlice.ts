@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import type { UnifiedCartItem, LocalCart, UserCart, CartItem } from "@/types/cart";
-import { Product } from "@/types/product";
-import { getCart, saveCart, clearCartStorage } from "@/helpers/cartLocalStorage";
-import { joinProductToCartUser } from "@/helpers/cartUtils";
+import { saveCart, clearCartStorage } from "@/helpers/cartLocalStorage";
 import { showLoading, hideLoading } from "./loadingSlice";
 import { API_URL } from "@/lib/api";
 
@@ -32,7 +30,7 @@ export const fetchUserCart = createAsyncThunk<UserCart, number>(
       await new Promise((resolve) => setTimeout(resolve, 1000));
       const carts = await resCart.json();
 
-      if (!carts.length) return []; // user chưa có giỏ hàng
+      if (!carts.length) return rejectWithValue("Cart empty");
 
       const cartId = carts[0].id;
       const resItems = await fetch(`${API_URL}/cartItems?cart_id=${cartId}`);
@@ -158,26 +156,70 @@ export const deleteUserCart = createAsyncThunk(
 export const mergeLocalToServerCart = createAsyncThunk<
   void,
   { user_id: number; localCart: LocalCart }
->("cart/mergeLocalToServerCart", async ({ user_id, localCart }) => {
-  const resCart = await fetch(`${API_URL}/carts?user_id=${user_id}`);
-  const carts = await resCart.json();
-  const cartId = carts[0]?.id;
+>("cart/mergeLocalToServerCart", async ({ user_id, localCart }, { rejectWithValue }) => {
+  try {
+    //Lấy cart id của user
+    const resCart = await fetch(`${API_URL}/carts?user_id=${user_id}`);
+    if (!resCart.ok) {
+      return rejectWithValue("Không thể lấy giỏ hàng người dùng từ server.");
+    }
+    const carts = await resCart.json();
+    let cartId = carts[0]?.id;
+    if (!cartId) {
+      const resNewCart = await fetch(`${API_URL}/carts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: user_id }),
+      });
+      const newCart = await resNewCart.json();
+      cartId = newCart.id;
+    }
 
-  if (!cartId) return;
+    // Lấy danh sách item theo cart id
+    const resCartItem = await fetch(`${API_URL}/cartItems?cart_id=${cartId}`);
+    if (!resCartItem.ok) {
+      return rejectWithValue("Không thể lấy dữ liệu cartItems từ server.");
+    }
+    const serverCartItems = await resCartItem.json();
 
-  for (const item of localCart) {
-    await fetch(`${API_URL}/cartItems`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        cart_id: cartId,
-        product_id: item.product_id,
-        quantity: item.quantity,
-      }),
-    });
+    for (const localItem of localCart) {
+      const existingItem = serverCartItems.find(
+        (i: CartItem) => i.product_id === localItem.product_id,
+      );
+
+      if (existingItem) {
+        // Nếu product đã có trong user cart -> cộng dồn
+        const resUpdate = await fetch(`${API_URL}/cartItems/${existingItem.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            quantity: existingItem.quantity + localItem.quantity,
+          }),
+        });
+        if (!resUpdate.ok) {
+          return rejectWithValue(`Không thể cập nhật sản phẩm ID ${existingItem.id}.`);
+        }
+      } else {
+        // Nếu chưa có -> thêm mới
+        const resCreate = await fetch(`${API_URL}/cartItems`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cart_id: cartId,
+            product_id: localItem.product_id,
+            quantity: localItem.quantity,
+          }),
+        });
+        if (!resCreate.ok) {
+          return rejectWithValue(`Không thể thêm sản phẩm ID ${localItem.product_id}.`);
+        }
+      }
+    }
+    clearCartStorage();
+  } catch (error) {
+    console.error("Lỗi khi merge giỏ hàng local:", error);
+    return rejectWithValue("Đã xảy ra lỗi khi đồng bộ giỏ hàng.");
   }
-
-  clearCartStorage();
 });
 
 const cartSlice = createSlice({
@@ -264,8 +306,21 @@ const cartSlice = createSlice({
       })
       .addCase(addUserCart.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.userCart = action.payload;
       })
       .addCase(addUserCart.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = String(action.payload);
+      })
+
+      .addCase(mergeLocalToServerCart.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(mergeLocalToServerCart.fulfilled, (state) => {
+        state.localCart = [];
+        clearCartStorage();
+      })
+      .addCase(mergeLocalToServerCart.rejected, (state, action) => {
         state.isLoading = false;
         state.error = String(action.payload);
       })
@@ -295,10 +350,6 @@ const cartSlice = createSlice({
       .addCase(deleteUserCart.rejected, (state, action) => {
         state.isLoading = false;
         state.error = String(action.payload);
-      })
-      .addCase(mergeLocalToServerCart.fulfilled, (state) => {
-        state.localCart = [];
-        clearCartStorage();
       });
   },
 });

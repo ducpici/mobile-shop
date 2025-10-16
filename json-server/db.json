@@ -60,6 +60,12 @@
       "email": "1",
       "password": "1",
       "id": 1760537413994
+    },
+    {
+      "name": "Van",
+      "email": "van",
+      "password": "1",
+      "id": 1760584892908
     }
   ],
   "products": [
@@ -261,15 +267,13 @@
     {
       "user_id": 1760536512700,
       "id": 1760536611526
+    },
+    {
+      "user_id": 1760584892908,
+      "id": 1760586654286
     }
   ],
   "cartItems": [
-    {
-      "id": "1",
-      "cart_id": 1,
-      "product_id": 1,
-      "quantity": 2
-    },
     {
       "id": "4",
       "cart_id": 2,
@@ -283,28 +287,52 @@
       "id": 1760515108461
     },
     {
-      "cart_id": "1",
-      "product_id": "2",
-      "quantity": 1,
-      "id": 1760522090574
-    },
-    {
-      "cart_id": "1",
-      "product_id": "4",
-      "quantity": 1,
-      "id": 1760522196446
-    },
-    {
-      "cart_id": "1",
-      "product_id": "9",
-      "quantity": 1,
-      "id": 1760533948153
-    },
-    {
       "cart_id": 1760536611526,
       "product_id": "3",
       "quantity": 1,
       "id": 1760536611571
+    },
+    {
+      "cart_id": "1",
+      "product_id": "2",
+      "quantity": 1,
+      "id": 1760583873557
+    },
+    {
+      "cart_id": "1",
+      "product_id": "6",
+      "quantity": 1,
+      "id": 1760583873573
+    },
+    {
+      "cart_id": "1",
+      "product_id": "12",
+      "quantity": 2,
+      "id": 1760586324639
+    },
+    {
+      "cart_id": 1760586654286,
+      "product_id": "10",
+      "quantity": 1,
+      "id": 1760586654366
+    },
+    {
+      "cart_id": 1760586654286,
+      "product_id": "12",
+      "quantity": 1,
+      "id": 1760586699455
+    },
+    {
+      "cart_id": 1760586654286,
+      "product_id": "9",
+      "quantity": 1,
+      "id": 1760586810493
+    },
+    {
+      "cart_id": "1",
+      "product_id": "11",
+      "quantity": 1,
+      "id": 1760586938127
     }
   ]
 }
