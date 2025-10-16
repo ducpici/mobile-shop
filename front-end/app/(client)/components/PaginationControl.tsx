@@ -10,12 +10,14 @@ import {
 } from "@/components/ui/pagination";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import { setPage } from "@/redux/productSlice";
+import { selectFilteredProducts } from "@/redux/selectors/productSelectors";
 
 const PaginationControl = () => {
   const dispatch = useAppDispatch();
-  const { currentPage, allProducts, itemsPerPage } = useAppSelector((state) => state.product);
+  const { currentPage, itemsPerPage } = useAppSelector((state) => state.product);
+  const filteredProducts = useAppSelector(selectFilteredProducts);
 
-  const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   if (totalPages <= 1) return null;
 

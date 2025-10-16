@@ -1,8 +1,8 @@
-import type { LocalCartItem } from "@/types/cart";
+import type { LocalCart, LocalCartItem } from "@/types/cart";
 
 const CART_KEY = "cart";
 
-export const getCart = (): LocalCartItem[] => {
+export const getCart = (): LocalCart => {
   if (typeof window === "undefined") return [];
   const data = localStorage.getItem(CART_KEY);
   return data ? JSON.parse(data) : [];

@@ -6,7 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { loginUser } from "@/redux/authSlice";
-import { useAppDispatch } from "@/hooks/storeHook";
+import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
+import { mergeLocalToServerCart } from "@/redux/cartSlice";
+import { getCart } from "@/helpers/cartLocalStorage";
+import { fetchUserCart } from "@/redux/cartSlice";
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +26,15 @@ const Page = () => {
     const resultAction = await dispatch(loginUser({ email, password }));
 
     if (loginUser.fulfilled.match(resultAction)) {
-      router.push("/");
+      const loggedUser = resultAction.payload;
+      const localCart = getCart();
+      if (loggedUser) {
+        if (localCart.length > 0) {
+          await dispatch(mergeLocalToServerCart({ user_id: loggedUser.id, localCart }));
+        }
+        await dispatch(fetchUserCart(loggedUser.id));
+        router.push("/");
+      }
     } else if (loginUser.rejected.match(resultAction)) {
       toast.error(resultAction.payload as string);
     }

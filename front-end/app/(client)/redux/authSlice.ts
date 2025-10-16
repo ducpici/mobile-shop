@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { clearUserProfile } from "./profileSlice";
 import { API_URL } from "@/lib/api";
-import { fetchUserCart } from "./cartSlice";
 
 type User = {
   id: number;
@@ -31,7 +30,7 @@ const initialState: AuthState = {
 
 export const loginUser = createAsyncThunk<User | null, { email: string; password: string }>(
   "auth/loginUser",
-  async ({ email, password }, { dispatch, rejectWithValue }) => {
+  async ({ email, password }, { rejectWithValue }) => {
     try {
       const res = await fetch(`${API_URL}/users?email=${email}&password=${password}`, {
         cache: "no-store",
@@ -44,9 +43,6 @@ export const loginUser = createAsyncThunk<User | null, { email: string; password
       if (resData.length === 0) return rejectWithValue("Incorrect email or password.");
       const user = resData[0];
       const userData = { id: user.id, name: user.name, email: user.email };
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("isLoggedIn", "true");
-      dispatch(fetchUserCart(userData.id));
       return userData;
     } catch (err) {
       console.error("Login error:", err);
@@ -56,9 +52,10 @@ export const loginUser = createAsyncThunk<User | null, { email: string; password
 );
 
 export const registerUser = createAsyncThunk<
-  User | null,
-  { name?: string; email: string; password: string }
->("auth/registerUser", async ({ name = "New User", email, password }, { rejectWithValue }) => {
+  string, // Kiểu dữ liệu trả về khi thành công
+  { name: string; email: string; password: string }, // Kiểu dữ liệu đầu vào
+  { rejectValue: string } // Kiểu dữ liệu reject
+>("auth/registerUser", async ({ name, email, password }, { rejectWithValue }) => {
   try {
     const checkRes = await fetch(`${API_URL}/users?email=${email}`, {
       cache: "no-store",
@@ -78,12 +75,14 @@ export const registerUser = createAsyncThunk<
     });
     if (!createRes.ok) return rejectWithValue("Failed to create account. Please try again later.");
 
-    const createdUser = await createRes.json();
-    return {
-      id: createdUser.id,
-      name: createdUser.name,
-      email: createdUser.email,
-    };
+    // const createdUser = await createRes.json();
+    // return {
+    //   id: createdUser.id,
+    //   name: createdUser.name,
+    //   email: createdUser.email,
+    // };
+
+    return "Account has been created";
   } catch (err) {
     console.error("Register error:", err);
     return rejectWithValue("Network error. Please check your connection.");
@@ -119,6 +118,8 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload;
         state.status = "success";
+        localStorage.setItem("user", JSON.stringify(action.payload));
+        localStorage.setItem("isLoggedIn", "true");
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -130,7 +131,7 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<User | null>) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.isLoading = false;
         state.user = null;
         state.status = "success";

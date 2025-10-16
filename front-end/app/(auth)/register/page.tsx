@@ -21,9 +21,8 @@ const Page = () => {
       return;
     }
     const resultAction = await dispatch(registerUser({ name, email, password }));
-
     if (registerUser.fulfilled.match(resultAction)) {
-      toast.success("Your account has been created. Please sign in to continue.");
+      toast.success(resultAction.payload);
       router.push("/login");
     } else if (registerUser.rejected.match(resultAction)) {
       toast.error(resultAction.payload as string);
