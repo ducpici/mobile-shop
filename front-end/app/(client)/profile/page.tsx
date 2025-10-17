@@ -34,9 +34,10 @@ const Page = () => {
     { value: Gender.Male, label: "Male" },
     { value: Gender.Female, label: "Female" },
   ];
-  const { userProfile: profile, isLoading } = useAppSelector((state) => state.profile);
+  const { userProfile: profile } = useAppSelector((state) => state.profile);
   const [userData, setUserData] = useState<User | null>(profile);
   const { user } = useAppSelector((state) => state.auth);
+  const { isLoading } = useAppSelector((state) => state.loading);
 
   const handleSave = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -61,8 +62,6 @@ const Page = () => {
     if (userStr) {
       const user = JSON.parse(userStr);
       dispatch(fetchUserProfile(Number(user.id)));
-    } else {
-      console.warn("No userId found in localStorage");
     }
   }, [dispatch]);
 

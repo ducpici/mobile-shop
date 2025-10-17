@@ -12,7 +12,7 @@ interface UserState {
 
 const initialState: UserState = {
   userProfile: null,
-  isLoading: true,
+  isLoading: false,
   isLoaded: false,
   error: null,
 };
@@ -89,6 +89,7 @@ const profileSlice = createSlice({
       .addCase(fetchUserProfile.rejected, (state) => {
         state.isLoading = false;
         state.isLoaded = true;
+        state.userProfile = null;
       })
 
       .addCase(updateUserProfile.fulfilled, (state, action) => {

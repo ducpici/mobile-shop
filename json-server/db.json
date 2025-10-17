@@ -86,6 +86,12 @@
       "email": "mai",
       "password": "123",
       "id": 1760604761354
+    },
+    {
+      "name": "Tiến Lê",
+      "email": "tien",
+      "password": "123",
+      "id": 1760616090250
     }
   ],
   "products": [
@@ -295,6 +301,10 @@
     {
       "user_id": 1760604761354,
       "id": 1760604796717
+    },
+    {
+      "user_id": 1760616090250,
+      "id": 1760616107247
     }
   ],
   "cartItems": [
@@ -337,19 +347,19 @@
     {
       "cart_id": "1",
       "product_id": "3",
-      "quantity": 1,
+      "quantity": 2,
       "id": 1760597604752
     },
     {
       "cart_id": "1",
       "product_id": "5",
-      "quantity": 1,
+      "quantity": 2,
       "id": 1760597644448
     },
     {
       "cart_id": "1",
       "product_id": "1",
-      "quantity": 1,
+      "quantity": 2,
       "id": 1760602299318
     },
     {
@@ -363,6 +373,18 @@
       "product_id": "10",
       "quantity": 2,
       "id": 1760604799162
+    },
+    {
+      "cart_id": "1",
+      "product_id": "8",
+      "quantity": 2,
+      "id": 1760608509761
+    },
+    {
+      "cart_id": 1760616107247,
+      "product_id": "7",
+      "quantity": 1,
+      "id": 1760616107310
     }
   ]
 }

@@ -22,6 +22,7 @@ export default function Home() {
   const { currentPage, itemsPerPage, isLoaded, isLoading } = useAppSelector(
     (state) => state.product,
   );
+  const [mounted, setMounted] = useState(false);
 
   // Pagination
   const start = (currentPage - 1) * itemsPerPage;
@@ -51,7 +52,6 @@ export default function Home() {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
