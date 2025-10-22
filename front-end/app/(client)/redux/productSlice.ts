@@ -1,7 +1,5 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "@/types/product";
-import { showLoading, hideLoading } from "./loadingSlice";
-import { API_URL } from "@/lib/api";
 
 interface ProductState {
   allProducts: Product[];
@@ -23,45 +21,6 @@ const initialState: ProductState = {
   error: null,
 };
 
-// Thunk: gọi API sản phẩm
-export const fetchProducts = createAsyncThunk<Product[]>(
-  "products/fetchProducts",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${API_URL}/products`);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // giả lập delay
-      if (!res.ok) throw new Error("Failed to fetch products");
-      const data = (await res.json()) as Product[];
-      return data;
-    } catch (err: unknown) {
-      let message = "Unknown error";
-      if (err instanceof Error) message = err.message;
-      return rejectWithValue(message);
-    } finally {
-    }
-  },
-);
-
-export const fetchProductById = createAsyncThunk<Product, string>(
-  "product/fetchProductById",
-  async (id, { dispatch, rejectWithValue }) => {
-    try {
-      dispatch(showLoading());
-      const res = await fetch(`${API_URL}/products/${id}`);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (!res.ok) throw new Error("Failed to fetch product");
-      const data = (await res.json()) as Product;
-      return data;
-    } catch (err: unknown) {
-      let message = "Unknown error";
-      if (err instanceof Error) message = err.message;
-      return rejectWithValue(message);
-    } finally {
-      dispatch(hideLoading());
-    }
-  },
-);
-
 export const productSlice = createSlice({
   name: "product",
   initialState,
@@ -72,41 +31,42 @@ export const productSlice = createSlice({
     setIsloading(state, action) {
       state.isLoading = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      // All product
-      .addCase(fetchProducts.pending, (state) => {
-        state.isLoaded = false;
-      })
-      .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.allProducts = action.payload;
-        state.isLoading = false;
-        state.isLoaded = true;
-      })
-      .addCase(fetchProducts.rejected, (state) => {
-        state.isLoading = false;
-        state.isLoaded = true;
-      })
-
-      // Product detail
-      .addCase(fetchProductById.pending, (state) => {
-        state.selectedProduct = null;
-        state.isLoading = true;
-        state.isLoaded = true;
-      })
-      .addCase(fetchProductById.fulfilled, (state, action) => {
-        state.selectedProduct = action.payload;
-        state.isLoading = false;
-        state.isLoaded = true;
-      })
-      .addCase(fetchProductById.rejected, (state, action) => {
-        // state.error = action.payload || "Failed to load product";
-        state.selectedProduct = null;
-      });
+    getAllProduct(state) {
+      state.isLoading = true;
+    },
+    getAllProductSuccess: (state, action: PayloadAction<Product[]>) => {
+      state.allProducts = action.payload;
+      state.isLoading = false;
+      state.isLoaded = true;
+    },
+    getAllProductFailure: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+      state.isLoading = false;
+    },
+    getProductById: (state, action: PayloadAction<number>) => {
+      state.isLoading = true;
+    },
+    getProductByIdSuccess: (state, action: PayloadAction<Product>) => {
+      state.selectedProduct = action.payload;
+      state.isLoading = false;
+      state.error = null;
+    },
+    getProductByIdFailure: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+      state.isLoading = false;
+    },
   },
 });
 
-export const { setPage, setIsloading } = productSlice.actions;
+export const {
+  setPage,
+  setIsloading,
+  getAllProduct,
+  getAllProductSuccess,
+  getAllProductFailure,
+  getProductById,
+  getProductByIdSuccess,
+  getProductByIdFailure,
+} = productSlice.actions;
 
 export default productSlice.reducer;

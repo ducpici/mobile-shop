@@ -1,22 +1,67 @@
-"use client";
+import { ajax } from "rxjs/ajax";
+import { API_URL } from "./api";
 
-import { ajax as rxAjax, AjaxConfig, AjaxResponse } from "rxjs/ajax";
-import { Observable } from "rxjs";
+type AjaxHeaders = Record<string, string>;
+type AjaxBody = Record<string, unknown> | string | null | undefined;
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4003";
+const getAuthHeaders = (): AjaxHeaders => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
-export const ajax = <T>(config: AjaxConfig): Observable<AjaxResponse<T>> => {
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+export const ajaxInstance = {
+  get: <T>(url: string, headers: AjaxHeaders = {}): ReturnType<typeof ajax<T>> =>
+    ajax<T>({
+      url: `${API_URL}${url}`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+        ...headers,
+      },
+    }),
 
-  return rxAjax<T>({
-    ...config,
-    url: `${BASE_URL}${config.url}`,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(config.headers || {}),
-    },
-    crossDomain: true,
-    timeout: 10000,
-  });
+  post: <T>(url: string, body?: AjaxBody, headers: AjaxHeaders = {}): ReturnType<typeof ajax<T>> =>
+    ajax<T>({
+      url: `${API_URL}${url}`,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+        ...headers,
+      },
+      body,
+    }),
+
+  put: <T>(url: string, body?: AjaxBody, headers: AjaxHeaders = {}): ReturnType<typeof ajax<T>> =>
+    ajax<T>({
+      url: `${API_URL}${url}`,
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+        ...headers,
+      },
+      body,
+    }),
+
+  patch: <T>(url: string, body?: AjaxBody, headers: AjaxHeaders = {}): ReturnType<typeof ajax<T>> =>
+    ajax<T>({
+      url: `${API_URL}${url}`,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...headers },
+      ...getAuthHeaders(),
+      body,
+    }),
+
+  del: <T>(url: string, headers: AjaxHeaders = {}): ReturnType<typeof ajax<T>> =>
+    ajax<T>({
+      url: `${API_URL}${url}`,
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+        ...headers,
+      },
+    }),
 };

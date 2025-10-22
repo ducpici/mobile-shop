@@ -4,14 +4,12 @@ import { User } from "@/types/user";
 interface UserState {
   userProfile: User | null;
   loading: boolean;
-  isLoaded: boolean;
   error: string | null;
 }
 
 const initialState: UserState = {
   userProfile: null,
   loading: false,
-  isLoaded: false,
   error: null,
 };
 
@@ -19,19 +17,18 @@ const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    fetchUser: (state, action: PayloadAction<number>) => {
+    getUser: (state, action: PayloadAction<number>) => {
       state.loading = true;
     },
-    setUser: (state, action: PayloadAction<User>) => {
+    getUserSuccess: (state, action: PayloadAction<User>) => {
       state.userProfile = action.payload;
       state.loading = false;
-      state.isLoaded = true;
     },
-    fetchUserError: (state, action: PayloadAction<string>) => {
+    getUserError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.loading = false;
     },
-    updateUser: (state) => {
+    updateUser: (state, action: PayloadAction<User>) => {
       state.loading = true;
     },
     updateUserSuccess: (state, action: PayloadAction<User>) => {
@@ -44,15 +41,14 @@ const profileSlice = createSlice({
     },
     clearUserProfile(state) {
       state.userProfile = null;
-      state.isLoaded = false;
     },
   },
 });
 
 export const {
-  fetchUser,
-  setUser,
-  fetchUserError,
+  getUser,
+  getUserSuccess,
+  getUserError,
   updateUser,
   updateUserSuccess,
   updateUserError,

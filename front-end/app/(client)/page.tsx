@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { fetchProducts } from "@/redux/productSlice";
 import { ProductCard } from "@/components/ProductCard";
 import PaginationControl from "./components/PaginationControl";
 import BreadCrumb from "./components/Breadcrumb";
@@ -10,13 +9,13 @@ import ProductFilters from "@/components/ProductFilters/ProductFilters";
 import { CartBadge } from "@/components/CartBadge";
 import ProductSkeleton from "./components/skeletons/ProductSkeleton";
 import { selectFilteredProducts } from "@/redux/selectors/productSelectors";
-import { toast } from "sonner";
-import { setPage } from "@/redux/productSlice";
+import { setPage, getAllProduct } from "@/redux/productSlice";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { setIsloading } from "@/redux/productSlice";
 
 export default function Home() {
   const dispatch = useAppDispatch();
+
   const filteredProducts = useAppSelector(selectFilteredProducts);
   const [displayedProducts, setDisplayedProducts] = useState(filteredProducts);
   const { currentPage, itemsPerPage, isLoaded, isLoading } = useAppSelector(
@@ -27,29 +26,10 @@ export default function Home() {
   // Pagination
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-
   const productList = displayedProducts.slice(start, end);
 
   useEffect(() => {
-    const justLoggedIn = localStorage.getItem("isLoggedIn");
-    const userStr = localStorage.getItem("user");
-
-    if (justLoggedIn === "true" && userStr) {
-      try {
-        const user = JSON.parse(userStr); // convert string -> object
-        if (user.name) {
-          toast.success(`Hello, ${user.name}!`);
-          localStorage.removeItem("isLoggedIn");
-        }
-      } catch (error) {
-        console.error("Failed to parse user from localStorage", error);
-      }
-    }
-    dispatch(setPage(1));
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(getAllProduct());
   }, [dispatch]);
 
   useEffect(() => setMounted(true), []);

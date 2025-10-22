@@ -22,8 +22,8 @@ import {
   increaseQuantity,
   decreaseQuantity,
   updateQuantity,
-  fetchUserCart,
   deleteUserCart,
+  getUserCart,
 } from "@/redux/cartSlice";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { joinProductToCartLocal, joinProductToCartUser } from "@/helpers/cartUtils";
@@ -47,7 +47,7 @@ const Page = () => {
 
   useEffect(() => {
     if (user) {
-      dispatch(fetchUserCart(user.id));
+      dispatch(getUserCart(user.id));
     } else {
       dispatch(hideLoading());
     }
@@ -96,6 +96,8 @@ const Page = () => {
     if (user) {
       const cartItem = userCart.find((i) => Number(i.product_id) === Number(product_id));
       if (!cartItem) return;
+      console.log("Deleting: ", cartItem.id);
+      console.log(typeof cartItem.id);
       dispatch(deleteUserCart(cartItem.id));
     } else {
       dispatch(removeProduct(product_id));

@@ -1,13 +1,12 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import type { LocalCart, UserCart, CartItem } from "@/types/cart";
-import { saveCart, clearCartStorage } from "@/helpers/cartLocalStorage";
-import { showLoading, hideLoading } from "./loadingSlice";
-import { API_URL } from "@/lib/api";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { LocalCart, UserCart } from "@/types/cart";
+import { saveCart } from "@/helpers/cartLocalStorage";
 
 interface CartState {
   localCart: LocalCart;
   userCart: UserCart;
   isLoading: boolean;
+  message: string | null;
   error: string | null;
 }
 
@@ -15,215 +14,98 @@ const initialState: CartState = {
   localCart: [],
   userCart: [],
   isLoading: false,
+  message: null,
   error: null,
 };
-
-export const fetchUserCart = createAsyncThunk<UserCart, number>(
-  "cart/fetchUserCart",
-  async (user_id, { dispatch, rejectWithValue }) => {
-    try {
-      dispatch(showLoading());
-      console.log("Fetching user cart");
-      const resCart = await fetch(`${API_URL}/carts?user_id=${user_id}`);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const carts = await resCart.json();
-
-      if (!carts.length) return rejectWithValue("Cart empty");
-
-      const cartId = carts[0].id;
-      const resItems = await fetch(`${API_URL}/cartItems?cart_id=${cartId}`);
-      const userCart = await resItems.json();
-      return userCart;
-    } catch (err: unknown) {
-      let message = "Unknown error";
-      if (err instanceof Error) message = err.message;
-      return rejectWithValue(message);
-    } finally {
-      dispatch(hideLoading());
-    }
-  },
-);
-
-export const addUserCart = createAsyncThunk(
-  "cart/addUserCart",
-  async ({ user_id, product_id }: { user_id: number; product_id: number }, { rejectWithValue }) => {
-    try {
-      // Lấy cart của user
-      const resCart = await fetch(`${API_URL}/carts?user_id=${user_id}`);
-      const carts = await resCart.json();
-      let cartId: number;
-
-      // Nếu user chưa có cart -> tạo mới
-      if (carts.length === 0) {
-        const resNewCart = await fetch(`${API_URL}/carts`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: user_id }),
-        });
-        const newCart = await resNewCart.json();
-        cartId = newCart.id;
-      } else {
-        cartId = carts[0].id;
-      }
-
-      // Lấy các cartItems hiện có của user
-      const resItems = await fetch(`${API_URL}/cartItems?cart_id=${cartId}`);
-      const userCart = await resItems.json();
-
-      // Kiểm tra sản phẩm đã có trong giỏ chưa
-      const existingItem = userCart.find(
-        (item: CartItem) => Number(item.product_id) === Number(product_id),
-      );
-
-      if (existingItem) {
-        // Tăng quantity lên 1
-        await fetch(`${API_URL}/cartItems/${existingItem.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ quantity: existingItem.quantity + 1 }),
-        });
-      } else {
-        // Thêm mới sản phẩm vào cart
-        await fetch(`${API_URL}/cartItems`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            cart_id: cartId,
-            product_id,
-            quantity: 1,
-          }),
-        });
-      }
-
-      // Lấy lại danh sách cart sau khi update
-      const updatedRes = await fetch(`${API_URL}/cartItems?cart_id=${cartId}`);
-      const updatedCart = await updatedRes.json();
-
-      return updatedCart;
-    } catch (err: unknown) {
-      let message = "Unknown error";
-      if (err instanceof Error) message = err.message;
-      return rejectWithValue(message);
-    }
-  },
-);
-
-export const updateUserCartQuantity = createAsyncThunk(
-  "cart/updateUserCartQuantity",
-  async (
-    { cartItemId, quantity }: { cartItemId: number; quantity: number },
-    { rejectWithValue },
-  ) => {
-    try {
-      const res = await fetch(`${API_URL}/cartItems/${cartItemId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quantity }),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to delete cart item");
-      }
-      return { cartItemId, quantity };
-    } catch (err: unknown) {
-      let message = "Unknown error";
-      if (err instanceof Error) message = err.message;
-      return rejectWithValue(message);
-    }
-  },
-);
-
-export const deleteUserCart = createAsyncThunk(
-  "cart/deleteUserCart",
-  async (cartItemId: number, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${API_URL}/cartItems/${cartItemId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) {
-        throw new Error("Failed to delete cart item");
-      }
-      return cartItemId;
-    } catch (err: unknown) {
-      let message = "Unknown error";
-      if (err instanceof Error) message = err.message;
-      return rejectWithValue(message);
-    }
-  },
-);
-
-export const mergeLocalToServerCart = createAsyncThunk<
-  void,
-  { user_id: number; localCart: LocalCart }
->("cart/mergeLocalToServerCart", async ({ user_id, localCart }, { rejectWithValue }) => {
-  try {
-    //Lấy cart id của user
-    const resCart = await fetch(`${API_URL}/carts?user_id=${user_id}`);
-    if (!resCart.ok) {
-      return rejectWithValue("Không thể lấy giỏ hàng người dùng từ server.");
-    }
-    const carts = await resCart.json();
-    let cartId = carts[0]?.id;
-    if (!cartId) {
-      const resNewCart = await fetch(`${API_URL}/carts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: user_id }),
-      });
-      const newCart = await resNewCart.json();
-      cartId = newCart.id;
-    }
-
-    // Lấy danh sách item theo cart id
-    const resCartItem = await fetch(`${API_URL}/cartItems?cart_id=${cartId}`);
-    if (!resCartItem.ok) {
-      return rejectWithValue("Không thể lấy dữ liệu cartItems từ server.");
-    }
-    const serverCartItems = await resCartItem.json();
-
-    for (const localItem of localCart) {
-      const existingItem = serverCartItems.find(
-        (i: CartItem) => i.product_id === localItem.product_id,
-      );
-
-      if (existingItem) {
-        // Nếu product đã có trong user cart -> cộng dồn
-        const resUpdate = await fetch(`${API_URL}/cartItems/${existingItem.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            quantity: existingItem.quantity + localItem.quantity,
-          }),
-        });
-        if (!resUpdate.ok) {
-          return rejectWithValue(`Không thể cập nhật sản phẩm ID ${existingItem.id}.`);
-        }
-      } else {
-        // Nếu chưa có -> thêm mới
-        const resCreate = await fetch(`${API_URL}/cartItems`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            cart_id: cartId,
-            product_id: localItem.product_id,
-            quantity: localItem.quantity,
-          }),
-        });
-        if (!resCreate.ok) {
-          return rejectWithValue(`Không thể thêm sản phẩm ID ${localItem.product_id}.`);
-        }
-      }
-    }
-    clearCartStorage();
-  } catch (error) {
-    console.error("Lỗi khi merge giỏ hàng local:", error);
-    return rejectWithValue("Đã xảy ra lỗi khi đồng bộ giỏ hàng.");
-  }
-});
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    //User cart
+    getUserCart: (state, _action: PayloadAction<number>) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+
+    getUserCartFailure: (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    setUserCart: (state, action: PayloadAction<UserCart>) => {
+      state.userCart = action.payload;
+      state.isLoading = false;
+      state.error = null;
+    },
+    addUserCart: (state, action: PayloadAction<{ user_id: number; product_id: number }>) => {
+      state.isLoading = true;
+      state.error = null;
+      state.message = null;
+    },
+    addUserCartSuccess: (state, action: PayloadAction<UserCart>) => {
+      state.userCart = action.payload;
+      state.isLoading = false;
+      state.message = "Product added to your cart";
+      state.error = null;
+    },
+    addUserCartFailure: (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.message = "Fail to add your cart";
+      state.error = action.payload;
+    },
+
+    updateUserCartQuantity: (
+      state,
+      action: PayloadAction<{ cartItemId: number; quantity: number }>,
+    ) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    updateUserCartQuantitySuccess: (
+      state,
+      action: PayloadAction<{ cartItemId: number; quantity: number }>,
+    ) => {
+      const item = state.userCart.find((i) => i.id === action.payload.cartItemId);
+      if (item) item.quantity = action.payload.quantity;
+      state.isLoading = false;
+    },
+    updateUserCartQuantityFailure: (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    deleteUserCart: (state, action: PayloadAction<number>) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    deleteUserCartSuccess: (state, action: PayloadAction<number>) => {
+      state.userCart = state.userCart.filter((item) => item.id !== action.payload);
+      state.isLoading = false;
+      state.message = "Product removed from your cart";
+    },
+    deleteUserCartFailure: (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    mergeLocalToServerCart: (
+      state,
+      action: PayloadAction<{ user_id: number; localCart: LocalCart }>,
+    ) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+
+    mergeLocalToServerCartSuccess: (state, action: PayloadAction<UserCart>) => {
+      state.userCart = action.payload;
+      state.localCart = [];
+      state.isLoading = false;
+    },
+
+    mergeLocalToServerCartFailure: (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+
+    //Local cart
     addToCart(state, action: PayloadAction<number>) {
       const product_id = action.payload;
       const existing = state.localCart.find((item) => item.product_id === product_id);
@@ -286,71 +168,6 @@ const cartSlice = createSlice({
       state.userCart = [];
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchUserCart.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(fetchUserCart.fulfilled, (state, action) => {
-        state.userCart = action.payload;
-        state.isLoading = false;
-      })
-      .addCase(fetchUserCart.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = String(action.payload);
-      })
-      .addCase(addUserCart.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(addUserCart.fulfilled, (state, action) => {
-        state.isLoading = false;
-        console.log(action.payload);
-        state.userCart = action.payload;
-      })
-      .addCase(addUserCart.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = String(action.payload);
-      })
-
-      .addCase(mergeLocalToServerCart.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(mergeLocalToServerCart.fulfilled, (state) => {
-        state.localCart = [];
-        clearCartStorage();
-      })
-      .addCase(mergeLocalToServerCart.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = String(action.payload);
-      })
-
-      .addCase(updateUserCartQuantity.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(updateUserCartQuantity.fulfilled, (state, action) => {
-        const { cartItemId, quantity } = action.payload;
-        state.userCart = state.userCart.map((item) =>
-          item.id === cartItemId ? { ...item, quantity } : item,
-        );
-        state.isLoading = false;
-      })
-      .addCase(updateUserCartQuantity.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = String(action.payload);
-      })
-      .addCase(deleteUserCart.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(deleteUserCart.fulfilled, (state, action) => {
-        const cartItemId = action.payload;
-        state.userCart = state.userCart.filter((item) => item.id !== cartItemId);
-        state.isLoading = false;
-      })
-      .addCase(deleteUserCart.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = String(action.payload);
-      });
-  },
 });
 export const {
   addToCart,
@@ -359,5 +176,20 @@ export const {
   removeProduct,
   updateQuantity,
   clearUserCart,
+  getUserCart,
+  getUserCartFailure,
+  setUserCart,
+  addUserCart,
+  addUserCartSuccess,
+  addUserCartFailure,
+  updateUserCartQuantity,
+  updateUserCartQuantitySuccess,
+  updateUserCartQuantityFailure,
+  deleteUserCart,
+  deleteUserCartSuccess,
+  deleteUserCartFailure,
+  mergeLocalToServerCart,
+  mergeLocalToServerCartSuccess,
+  mergeLocalToServerCartFailure,
 } = cartSlice.actions;
 export default cartSlice.reducer;

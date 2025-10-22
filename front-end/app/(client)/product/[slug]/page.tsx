@@ -7,7 +7,7 @@ import RatingStars from "@/components/RatingStars";
 import { toast } from "sonner";
 import { addToCart } from "@/redux/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { fetchProductById } from "@/redux/productSlice";
+import { getProductById } from "@/redux/productSlice";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { CartBadge } from "@/components/CartBadge";
 import { addUserCart } from "@/redux/cartSlice";
@@ -26,7 +26,7 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (slug) dispatch(fetchProductById(slug));
+    if (slug) dispatch(getProductById(Number(slug)));
   }, [dispatch, slug]);
 
   useEffect(() => {

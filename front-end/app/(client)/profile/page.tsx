@@ -19,11 +19,10 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { format } from "date-fns";
-import { fetchUserProfile, updateUserProfile } from "@/redux/profileSlice";
+import { getUser, updateUser } from "@/redux/profileSlice";
 import { CartBadge } from "@/components/CartBadge";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { hideLoading } from "@/redux/loadingSlice";
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -52,7 +51,8 @@ const Page = () => {
       toast("Please fill full information");
       return;
     }
-    dispatch(updateUserProfile(userData));
+    console.log({ data: userData });
+    dispatch(updateUser(userData));
     toast.success("Updated profile");
     setIsModalOpen(false);
   };
@@ -61,13 +61,12 @@ const Page = () => {
     const userStr = localStorage.getItem("user");
     if (userStr) {
       const user = JSON.parse(userStr);
-      dispatch(fetchUserProfile(Number(user.id)));
+      dispatch(getUser(Number(user.id)));
     }
   }, [dispatch]);
 
   useEffect(() => {
     if (!user) {
-      dispatch(hideLoading());
       setUserData(null);
     }
   }, [user]);
@@ -127,7 +126,11 @@ const Page = () => {
                 <span className="w-40 font-medium">Sex:</span>
                 <div className="flex items-center gap-2">
                   <span className="flex-1">
-                    {profile.gender ? GenderLabel[profile.gender] : <>Null</>}
+                    {profile.gender !== undefined && profile.gender !== null ? (
+                      GenderLabel[profile.gender]
+                    ) : (
+                      <>Null</>
+                    )}
                   </span>
                 </div>
               </div>

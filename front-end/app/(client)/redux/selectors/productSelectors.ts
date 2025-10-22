@@ -10,6 +10,7 @@ const selectSearch = (state: RootState) => state.search.value;
 export const selectFilteredProducts = createSelector(
   [selectAllProducts, selectFilters, selectSearch],
   (products, filters, search) => {
+    if (!products) return [];
     const query = search.trim().toLowerCase();
 
     return products.filter((item) => {
