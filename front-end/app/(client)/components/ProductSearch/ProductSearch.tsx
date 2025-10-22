@@ -2,20 +2,28 @@ import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import { setSearchValue } from "@/redux/searchSlice";
-
+import { getAllProduct } from "@/redux/productSlice";
 const ProductSearch = () => {
   const dispatch = useAppDispatch();
   const searchValue = useAppSelector((state) => state.search.value);
   const [dataSearch, setDataSearch] = useState("");
+
   useEffect(() => {
     setDataSearch(searchValue);
   }, [searchValue]);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
-      dispatch(setSearchValue(dataSearch.toLowerCase()));
+      if (dataSearch !== searchValue) {
+        dispatch(setSearchValue(dataSearch));
+      }
     }, 500);
     return () => clearTimeout(timeout);
-  }, [dataSearch, dispatch]);
+  }, [dataSearch, dispatch, searchValue]);
+
+  useEffect(() => {
+    dispatch(getAllProduct());
+  }, [searchValue, dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();

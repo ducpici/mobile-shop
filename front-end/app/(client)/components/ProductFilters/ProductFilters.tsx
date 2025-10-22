@@ -23,6 +23,7 @@ import {
   resetFilters,
 } from "@/redux/filterSlice";
 import { setSearchValue } from "@/redux/searchSlice";
+import { getAllProduct } from "@/redux/productSlice";
 
 const ProductFilters = () => {
   const dispatch = useAppDispatch();
@@ -39,11 +40,13 @@ const ProductFilters = () => {
 
   const handleApply = () => {
     setOpenFilter(false);
+    dispatch(getAllProduct());
   };
 
   const handleReset = () => {
     dispatch(resetFilters());
     dispatch(setSearchValue(""));
+    dispatch(getAllProduct());
     setOpenFilter(false);
   };
 

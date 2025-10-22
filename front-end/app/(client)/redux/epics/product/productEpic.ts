@@ -14,17 +14,36 @@ import {
   getProductByIdFailure,
 } from "@/redux/productSlice";
 
-export const getAllProductEpic: Epic<Action, Action, RootState> = (action$) =>
+export const getAllProductEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(getAllProduct.type),
-    switchMap(() =>
-      productService.getAll().pipe(
-        map((res) => getAllProductSuccess(res.response)),
-        catchError((error) => of(getAllProductFailure(error.message ?? "Unknown error"))),
-        startWith(showLoading()),
-        concatWith(of(hideLoading())),
-      ),
-    ),
+    switchMap(() => {
+      const { currentPage, itemsPerPage } = state$.value.product;
+      const { price, star } = state$.value.filter;
+      const { value } = state$.value.search;
+      const start = (currentPage - 1) * itemsPerPage;
+      return productService
+        .getByFilters(
+          start,
+          itemsPerPage,
+          price.min ?? undefined,
+          price.max ?? undefined,
+          star.min ?? undefined,
+          star.max ?? undefined,
+          value,
+        )
+        .pipe(
+          map((res) => {
+            const total = Number(res.xhr.getResponseHeader("X-Total-Count"));
+            console.log(total);
+            const products = res.response;
+            return getAllProductSuccess({ total, products });
+          }),
+          catchError((err) => of(getAllProductFailure(err.message))),
+          startWith(showLoading()),
+          concatWith(of(hideLoading())),
+        );
+    }),
   );
 
 export const getProductByIdEpic: Epic<Action, Action, RootState> = (action$) =>

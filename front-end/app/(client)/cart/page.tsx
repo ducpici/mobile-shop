@@ -31,6 +31,8 @@ import { selectCartItemCount } from "@/redux/selectors/cartSelectors";
 import { updateUserCartQuantity } from "@/redux/cartSlice";
 import { calculateCartTotals } from "@/helpers/cartUtils";
 import { hideLoading } from "@/redux/loadingSlice";
+import { forkJoin } from "rxjs";
+import { productService } from "@/services/productService";
 
 const Page = () => {
   const { userCart, localCart } = useAppSelector((state) => state.cart);
@@ -56,11 +58,30 @@ const Page = () => {
   useEffect(() => {
     // user đã login -> fetch user cart
     if (user) {
-      // dispatch(fetchUserCart({ user_id: user.id, products }));
-      setCartItems(joinProductToCartUser(userCart, products));
+      setCartItems(userCart);
     } else {
       // user chưa login -> lấy cart từ localStorage
-      setCartItems(joinProductToCartLocal(localCart, products));
+      // Tạo array các request API cho từng product_id
+      const requests = localCart.map((item) => productService.getById(Number(item.product_id)));
+      // forkJoin để chờ tất cả request hoàn thành
+      const subscription = forkJoin(requests).subscribe({
+        next: (responses) => {
+          const joined = localCart.map((item, idx) => ({
+            id: idx + 1, // fake id tạm thời cho React key
+            cart_id: 0, // 0 hoặc -1 để đánh dấu localCart
+            product_id: Number(item.product_id),
+            quantity: item.quantity,
+            product: responses[idx].response,
+          }));
+          setCartItems(joined);
+        },
+        error: (err) => {
+          console.error("Failed to fetch products for localCart:", err);
+          setCartItems([]); // fallback
+        },
+      });
+
+      return () => subscription.unsubscribe(); // cleanup
     }
   }, [userCart, localCart, products, user]);
 

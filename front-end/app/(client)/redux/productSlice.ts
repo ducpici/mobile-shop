@@ -4,6 +4,7 @@ import { Product } from "@/types/product";
 interface ProductState {
   allProducts: Product[];
   selectedProduct: Product | null;
+  totalProduct: number;
   currentPage: number;
   itemsPerPage: number;
   isLoading: boolean;
@@ -14,6 +15,7 @@ interface ProductState {
 const initialState: ProductState = {
   allProducts: [],
   selectedProduct: null,
+  totalProduct: 0,
   currentPage: 1,
   itemsPerPage: 12,
   isLoading: false,
@@ -34,8 +36,12 @@ export const productSlice = createSlice({
     getAllProduct(state) {
       state.isLoading = true;
     },
-    getAllProductSuccess: (state, action: PayloadAction<Product[]>) => {
-      state.allProducts = action.payload;
+    getAllProductSuccess: (
+      state,
+      action: PayloadAction<{ total: number; products: Product[] }>,
+    ) => {
+      state.allProducts = action.payload.products;
+      state.totalProduct = action.payload.total;
       state.isLoading = false;
       state.isLoaded = true;
     },
