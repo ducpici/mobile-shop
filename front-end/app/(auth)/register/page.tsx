@@ -1,34 +1,41 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Lock, UserRound, Eye, EyeClosed, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAppDispatch } from "@/hooks/storeHook";
+import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import { toast } from "sonner";
-import { registerUser } from "@/redux/authSlice";
+import { registerUser } from "@/(client)/redux/slices/authSlice";
 
 const Page = () => {
   const dispatch = useAppDispatch();
+  const { message, error } = useAppSelector((state) => state.auth);
   const router = useRouter();
   const [isViewPass, setIsViewPass] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleRegister = async () => {
+
+  const handleRegister = () => {
     if (!name || !email || !password) {
-      toast.error("Please enter both email and password");
+      toast.error("Please enter all fields");
       return;
     }
-    const resultAction = await dispatch(registerUser({ name, email, password }));
 
-    if (registerUser.fulfilled.match(resultAction)) {
-      toast.success("Your account has been created. Please sign in to continue.");
-      router.push("/login");
-    } else if (registerUser.rejected.match(resultAction)) {
-      toast.error(resultAction.payload as string);
-    }
+    dispatch(registerUser({ name, email, password }));
   };
+
+  useEffect(() => {
+    if (message) {
+      toast.success(message);
+      router.push("/login");
+    }
+    if (error) {
+      toast.error(error);
+    }
+  }, [message, error, router]);
+
   return (
     <div className="flex h-screen w-full items-center justify-center bg-linear-to-t from-[#0093E9] to-[#01AEEF]">
       <div className="h-150 w-100 space-y-4 p-4">

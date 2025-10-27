@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Pagination,
   PaginationContent,
@@ -9,13 +8,12 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { setPage } from "@/redux/productSlice";
+import { setPage } from "@/(client)/redux/slices/productSlice";
 
 const PaginationControl = () => {
   const dispatch = useAppDispatch();
-  const { currentPage, allProducts, itemsPerPage } = useAppSelector((state) => state.product);
-
-  const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+  const { currentPage, itemsPerPage, totalProduct } = useAppSelector((state) => state.product);
+  const totalPages = Math.ceil(totalProduct / itemsPerPage);
 
   if (totalPages <= 1) return null;
 

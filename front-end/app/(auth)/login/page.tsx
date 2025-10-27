@@ -1,44 +1,45 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Lock, Mail, Eye, EyeClosed } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { loginUser } from "@/redux/authSlice";
+import { loginUser } from "@/(client)/redux/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { mergeLocalToServerCart } from "@/redux/cartSlice";
+import { getUserCart, mergeLocalToServerCart } from "@/(client)/redux/slices/cartSlice";
 import { getCart } from "@/helpers/cartLocalStorage";
-import { fetchUserCart } from "@/redux/cartSlice";
 
 const Page = () => {
   const dispatch = useAppDispatch();
+  const { user, error } = useAppSelector((state) => state.auth);
+
   const router = useRouter();
   const [isViewPass, setIsViewPass] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { user } = useAppSelector((state) => state.auth);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     if (!email || !password) {
       toast.error("Please enter both email and password");
       return;
     }
-    const resultAction = await dispatch(loginUser({ email, password }));
-
-    if (loginUser.fulfilled.match(resultAction)) {
-      const localCart = getCart();
-      if (localCart.length > 0) {
-        if (user) {
-          await dispatch(mergeLocalToServerCart({ user_id: user.id, localCart }));
-          await dispatch(fetchUserCart(user.id));
-        }
-      }
-      router.push("/");
-    } else if (loginUser.rejected.match(resultAction)) {
-      toast.error(resultAction.payload as string);
-    }
+    dispatch(loginUser({ email, password }));
   };
+
+  useEffect(() => {
+    if (user) {
+      toast.success(`Welcome back, ${user.name}!`);
+      console.log("User id: ", user.id);
+      console.log("Cart local: ", getCart());
+      dispatch(mergeLocalToServerCart({ user_id: user.id, localCart: getCart() }));
+      dispatch(getUserCart(user.id));
+      router.push("/");
+    }
+    if (error) {
+      toast.error(error);
+    }
+  }, [user, error, router, dispatch]);
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-linear-to-t from-[#0093E9] to-[#01AEEF]">

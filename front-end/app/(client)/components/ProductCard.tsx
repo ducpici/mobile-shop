@@ -5,10 +5,10 @@ import { Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
-import { addToCart } from "@/redux/cartSlice";
+import { addToCart } from "@/(client)/redux/slices/cartSlice";
 import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { addUserCart } from "@/redux/cartSlice";
+import { addUserCart } from "@/(client)/redux/slices/cartSlice";
 
 type ProductCardProps = {
   product: Product;
@@ -16,7 +16,7 @@ type ProductCardProps = {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { user } = useAppSelector((state) => state.auth);
-
+  const { message } = useAppSelector((state) => state.cart);
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -24,7 +24,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     if (user) {
       //Call API add to cart
       dispatch(addUserCart({ user_id: user.id, product_id: product_id }));
-      toast.success("Product added to your cart", {
+      toast.info(message, {
         action: {
           label: "Go to cart",
           onClick: () => {

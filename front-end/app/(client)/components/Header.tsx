@@ -5,9 +5,10 @@ import Link from "next/link";
 import { User, Menu, X, Package, LogIn, LogOut, FileUser } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAppSelector, useAppDispatch } from "@/hooks/storeHook";
-import { setMobileOpen } from "@/redux/sidebarSlice";
-import { logoutUser, clearAuthUser } from "@/redux/authSlice";
-import { clearUserCart } from "@/redux/cartSlice";
+import { setMobileOpen } from "@/(client)/redux/slices/sidebarSlice";
+import { logoutUser } from "@/(client)/redux/slices/authSlice";
+import { clearUserCart } from "@/(client)/redux/slices/cartSlice";
+import { clearUserProfile } from "@/(client)/redux/slices/profileSlice";
 import { useRouter } from "next/navigation";
 
 const Header = () => {
@@ -19,8 +20,8 @@ const Header = () => {
 
   const handleLogout = async () => {
     dispatch(logoutUser());
-    dispatch(clearAuthUser());
     dispatch(clearUserCart());
+    dispatch(clearUserProfile());
     router.push("/");
   };
 

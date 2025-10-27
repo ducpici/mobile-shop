@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
-import { Plus, Minus, CircleX } from "lucide-react";
+import { Plus, Minus, CircleX, ShoppingCart } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,15 +22,17 @@ import {
   increaseQuantity,
   decreaseQuantity,
   updateQuantity,
-  fetchUserCart,
   deleteUserCart,
-} from "@/redux/cartSlice";
+  getUserCart,
+} from "@/redux/slices/cartSlice";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { joinProductToCartLocal, joinProductToCartUser } from "@/helpers/cartUtils";
+
 import { selectCartItemCount } from "@/redux/selectors/cartSelectors";
-import { updateUserCartQuantity } from "@/redux/cartSlice";
+import { updateUserCartQuantity } from "@/redux/slices/cartSlice";
 import { calculateCartTotals } from "@/helpers/cartUtils";
-import { hideLoading } from "@/redux/loadingSlice";
+import { hideLoading } from "@/redux/slices/loadingSlice";
+import { forkJoin } from "rxjs";
+import { productService } from "@/services/productService";
 
 const Page = () => {
   const { userCart, localCart } = useAppSelector((state) => state.cart);
@@ -47,7 +49,7 @@ const Page = () => {
 
   useEffect(() => {
     if (user) {
-      dispatch(fetchUserCart(user.id));
+      dispatch(getUserCart(user.id));
     } else {
       dispatch(hideLoading());
     }
@@ -56,11 +58,34 @@ const Page = () => {
   useEffect(() => {
     // user đã login -> fetch user cart
     if (user) {
-      // dispatch(fetchUserCart({ user_id: user.id, products }));
-      setCartItems(joinProductToCartUser(userCart, products));
+      setCartItems(userCart);
     } else {
+      if (localCart.length === 0) {
+        setCartItems([]);
+        return;
+      }
       // user chưa login -> lấy cart từ localStorage
-      setCartItems(joinProductToCartLocal(localCart, products));
+      // Tạo array các request API cho từng product_id
+      const requests = localCart.map((item) => productService.getById(Number(item.product_id)));
+      // forkJoin để chờ tất cả request hoàn thành
+      const subscription = forkJoin(requests).subscribe({
+        next: (responses) => {
+          const joined = localCart.map((item, idx) => ({
+            id: idx + 1, // fake id tạm thời cho React key
+            cart_id: 0, // 0 hoặc -1 để đánh dấu localCart
+            product_id: Number(item.product_id),
+            quantity: item.quantity,
+            product: responses[idx].response,
+          }));
+          setCartItems(joined);
+        },
+        error: (err) => {
+          console.error("Failed to fetch products for localCart:", err);
+          setCartItems([]); // fallback
+        },
+      });
+
+      return () => subscription.unsubscribe(); // cleanup
     }
   }, [userCart, localCart, products, user]);
 
@@ -96,6 +121,8 @@ const Page = () => {
     if (user) {
       const cartItem = userCart.find((i) => Number(i.product_id) === Number(product_id));
       if (!cartItem) return;
+      console.log("Deleting: ", cartItem.id);
+      console.log(typeof cartItem.id);
       dispatch(deleteUserCart(cartItem.id));
     } else {
       dispatch(removeProduct(product_id));
@@ -116,7 +143,13 @@ const Page = () => {
           <>
             {cartItems.length == 0 ? (
               <>
-                <p className="text-center">Cart Empty!</p>
+                <div className="flex h-full flex-1 flex-col">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <ShoppingCart size={50} className="text-gray-400" />
+                    <h3 className="text-lg font-semibold">Your cart is empty!</h3>
+                    <p className="text-sm">Explore our products and add items to your cart</p>
+                  </div>
+                </div>
               </>
             ) : (
               <>
@@ -125,7 +158,7 @@ const Page = () => {
                     <h2 className="mb-2 font-bold md:mb-4 md:text-2xl">My Cart</h2>
                     <p className="text-right text-sm">{itemCount} items in bag</p>
                   </div>
-                  <div className="product-list scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 mb-[250px] h-full flex-1 space-y-2 overflow-y-auto md:mb-10 md:h-svh md:space-y-4">
+                  <div className="product-list scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 mb-[200px] h-full flex-1 space-y-2 overflow-y-auto md:mb-10 md:h-svh md:space-y-4">
                     {cartItems.map((item) => {
                       if (!item.product) return null;
                       const product = item.product;
@@ -234,7 +267,7 @@ const Page = () => {
                 <div className="fixed bottom-0 left-0 z-1 w-full border-t bg-white p-2 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 md:static md:flex-1/3 md:border-none md:p-3 md:px-0 md:py-0 md:shadow-none">
                   {/* <div className="w-full border-t bg-white px-3 py-3 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 md:static md:flex-1/3 md:border-none md:px-0 md:py-0 md:shadow-none"> */}
                   <h2 className="mb-2 font-bold md:mb-4 md:text-2xl">Order information</h2>
-                  <div className="md:space-y-2">
+                  <div className="space-y-1 md:space-y-2">
                     <div>
                       <div className="flex items-center justify-between">
                         <span>Sub Total:</span>
@@ -248,13 +281,12 @@ const Page = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="font-bold">Total:</span>
-                        <span className="text-xl font-semibold text-red-500">
+                        <span className="text-base font-semibold text-red-500 md:text-xl">
                           {total.toLocaleString("vi")}₫
                         </span>
                       </div>
                     </div>
-
-                    <div>
+                    <div className="hidden md:block">
                       <ul className="list-disc pl-4 text-sm text-gray-500">
                         <li>Shipping charges will be calculated at checkout.</li>
                         <li>You can also enter a coupon code at the checkout page.</li>

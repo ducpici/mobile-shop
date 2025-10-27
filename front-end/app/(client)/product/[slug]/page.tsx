@@ -5,12 +5,12 @@ import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
 import RatingStars from "@/components/RatingStars";
 import { toast } from "sonner";
-import { addToCart } from "@/redux/cartSlice";
+import { addToCart } from "@/redux/slices/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { fetchProductById } from "@/redux/productSlice";
+import { getProductById } from "@/redux/slices/productSlice";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { CartBadge } from "@/components/CartBadge";
-import { addUserCart } from "@/redux/cartSlice";
+import { addUserCart } from "@/redux/slices/cartSlice";
 
 const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = React.use(params);
@@ -26,7 +26,7 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (slug) dispatch(fetchProductById(slug));
+    if (slug) dispatch(getProductById(Number(slug)));
   }, [dispatch, slug]);
 
   useEffect(() => {
@@ -143,7 +143,13 @@ const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
               </div>
 
               <div className="mt-2 flex items-center justify-center gap-4 md:ml-4">
-                <button className="cursor-pointer rounded bg-[#00C2FF] px-3 py-2 text-lg font-semibold text-white">
+                <button
+                  className="cursor-pointer rounded bg-[#00C2FF] px-3 py-2 text-lg font-semibold text-white"
+                  onClick={() => {
+                    handleAddToCart(product.id);
+                    router.push("/cart");
+                  }}
+                >
                   Buy now
                 </button>
                 <button

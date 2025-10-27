@@ -1,55 +1,39 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { fetchProducts } from "@/redux/productSlice";
 import { ProductCard } from "@/components/ProductCard";
-import PaginationControl from "./components/PaginationControl";
+import PaginationControl from "@/components/PaginationControl";
 import BreadCrumb from "./components/Breadcrumb";
 import ProductSearch from "@/components/ProductSearch/ProductSearch";
 import ProductFilters from "@/components/ProductFilters/ProductFilters";
 import { CartBadge } from "@/components/CartBadge";
-import ProductSkeleton from "./components/skeletons/ProductSkeleton";
-import { selectFilteredProducts } from "@/redux/selectors/productSelectors";
-import { toast } from "sonner";
-import { setPage } from "@/redux/productSlice";
+import ProductSkeleton from "@/components/skeletons/ProductSkeleton";
+import { setPage, getAllProduct } from "@/redux/slices/productSlice";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { usePathname } from "next/navigation";
+import { Box } from "lucide-react";
 
 export default function Home() {
   const dispatch = useAppDispatch();
-  const filteredProducts = useAppSelector(selectFilteredProducts);
-  const { currentPage, itemsPerPage, isLoaded, isLoading } = useAppSelector(
+  const pathname = usePathname();
+  const { allProducts, currentPage, itemsPerPage, isLoading } = useAppSelector(
     (state) => state.product,
   );
-
-  // Pagination
-  const start = (currentPage - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  const productList = filteredProducts.slice(start, end);
-
-  useEffect(() => {
-    const justLoggedIn = localStorage.getItem("isLoggedIn");
-    const userStr = localStorage.getItem("user");
-
-    if (justLoggedIn === "true" && userStr) {
-      try {
-        const user = JSON.parse(userStr); // convert string -> object
-        if (user.name) {
-          toast.success(`Hello, ${user.name}!`);
-          localStorage.removeItem("isLoggedIn");
-        }
-      } catch (error) {
-        console.error("Failed to parse user from localStorage", error);
-      }
-    }
-    dispatch(setPage(1));
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
-
   const [mounted, setMounted] = useState(false);
+
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (pathname === "/") {
+      // Reset page mỗi lần vào Home
+      dispatch(setPage(1));
+    }
+  }, [pathname, dispatch]);
+
+  useEffect(() => {
+    // Gọi API mỗi khi đổi trang
+    dispatch(getAllProduct());
+  }, [dispatch, currentPage]);
 
   if (!mounted) {
     return (
@@ -75,16 +59,20 @@ export default function Home() {
           </div>
         </div>
       </div>
+
       <div className="main-content scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100 flex-1 overflow-y-auto">
-        <div className="grid grid-cols-2 gap-4 py-2 md:grid-cols-6">
-          {!isLoaded || isLoading ? (
+        <div className="grid grid-cols-2 gap-4 py-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          {isLoading ? (
             Array.from({ length: itemsPerPage }).map((_, i) => <ProductSkeleton key={i} />)
-          ) : productList.length === 0 ? (
-            <div className="col-span-full mt-10 flex justify-center text-gray-500">
-              Product Not Found!
+          ) : allProducts.length === 0 ? (
+            <div className="col-span-full mt-10 flex justify-center">
+              <div className="flex flex-col items-center justify-center gap-2">
+                <Box size={50} className="text-gray-400" />
+                <h3 className="text-lg font-semibold">Product not found!</h3>
+              </div>
             </div>
           ) : (
-            productList.map((product, i) => (
+            allProducts.map((product, i) => (
               <div key={product.id} style={{ animationDelay: `${i * 50}ms` }}>
                 <ProductCard product={product} />
               </div>
@@ -92,6 +80,7 @@ export default function Home() {
           )}
         </div>
       </div>
+
       <PaginationControl />
     </>
   );

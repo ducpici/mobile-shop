@@ -21,8 +21,9 @@ import {
   setMinStar,
   setMaxStar,
   resetFilters,
-} from "@/redux/filterSlice";
-import { setSearchValue } from "@/redux/searchSlice";
+} from "@/(client)/redux/slices/filterSlice";
+import { setSearchValue } from "@/(client)/redux/slices/searchSlice";
+import { getAllProduct } from "@/(client)/redux/slices/productSlice";
 
 const ProductFilters = () => {
   const dispatch = useAppDispatch();
@@ -39,11 +40,13 @@ const ProductFilters = () => {
 
   const handleApply = () => {
     setOpenFilter(false);
+    dispatch(getAllProduct());
   };
 
   const handleReset = () => {
     dispatch(resetFilters());
     dispatch(setSearchValue(""));
+    dispatch(getAllProduct());
     setOpenFilter(false);
   };
 

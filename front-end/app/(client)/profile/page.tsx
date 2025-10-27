@@ -3,10 +3,17 @@ import { useEffect, useState } from "react";
 import React from "react";
 import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
-import { UserPen, CircleX, Calendar as CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
+import {
+  UserPen,
+  CircleX,
+  Calendar as CalendarIcon,
+  Check,
+  ChevronsUpDown,
+  User2Icon,
+} from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { User, GenderLabel, Gender } from "@/types/user";
-import { formatDate } from "../utils/formatDate";
+import { formatDate } from "@/utils/formatDate";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -19,11 +26,10 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { format } from "date-fns";
-import { fetchUserProfile, updateUserProfile } from "@/redux/profileSlice";
+import { getUser, updateUser } from "@/redux/slices/profileSlice";
 import { CartBadge } from "@/components/CartBadge";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { hideLoading } from "@/redux/loadingSlice";
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -34,9 +40,10 @@ const Page = () => {
     { value: Gender.Male, label: "Male" },
     { value: Gender.Female, label: "Female" },
   ];
-  const { userProfile: profile, isLoading } = useAppSelector((state) => state.profile);
+  const { userProfile: profile } = useAppSelector((state) => state.profile);
   const [userData, setUserData] = useState<User | null>(profile);
   const { user } = useAppSelector((state) => state.auth);
+  const { isLoading } = useAppSelector((state) => state.loading);
 
   const handleSave = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -51,7 +58,8 @@ const Page = () => {
       toast("Please fill full information");
       return;
     }
-    dispatch(updateUserProfile(userData));
+    console.log({ data: userData });
+    dispatch(updateUser(userData));
     toast.success("Updated profile");
     setIsModalOpen(false);
   };
@@ -60,15 +68,12 @@ const Page = () => {
     const userStr = localStorage.getItem("user");
     if (userStr) {
       const user = JSON.parse(userStr);
-      dispatch(fetchUserProfile(Number(user.id)));
-    } else {
-      console.warn("No userId found in localStorage");
+      dispatch(getUser(Number(user.id)));
     }
   }, [dispatch]);
 
   useEffect(() => {
     if (!user) {
-      dispatch(hideLoading());
       setUserData(null);
     }
   }, [user]);
@@ -89,7 +94,11 @@ const Page = () => {
         {isLoading ? (
           <LoadingSpinner />
         ) : !profile ? (
-          <p className="text-center">Not found!</p>
+          <div className="flex flex-col items-center justify-center gap-2">
+            <User2Icon size={50} className="text-gray-400" />
+            <h3 className="text-lg font-semibold">Profile not found!</h3>
+            <p className="text-sm">Please login to your account.</p>
+          </div>
         ) : (
           <div className="">
             <div className="flex items-center justify-between">
@@ -128,7 +137,11 @@ const Page = () => {
                 <span className="w-40 font-medium">Sex:</span>
                 <div className="flex items-center gap-2">
                   <span className="flex-1">
-                    {profile.gender ? GenderLabel[profile.gender] : <>Null</>}
+                    {profile.gender !== undefined && profile.gender !== null ? (
+                      GenderLabel[profile.gender]
+                    ) : (
+                      <>Null</>
+                    )}
                   </span>
                 </div>
               </div>
@@ -231,7 +244,7 @@ const Page = () => {
                       <ChevronsUpDown className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="z-[1000] w-[200px] p-0">
+                  <PopoverContent className="z-[1000] w-fit p-0" side="bottom" align="start">
                     <Command>
                       <CommandList>
                         <CommandEmpty>No gender found.</CommandEmpty>
