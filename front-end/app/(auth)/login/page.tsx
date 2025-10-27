@@ -5,9 +5,9 @@ import { Lock, Mail, Eye, EyeClosed } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { loginUser } from "@/redux/authSlice";
+import { loginUser } from "@/(client)/redux/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { getUserCart, mergeLocalToServerCart } from "@/redux/cartSlice";
+import { getUserCart, mergeLocalToServerCart } from "@/(client)/redux/slices/cartSlice";
 import { getCart } from "@/helpers/cartLocalStorage";
 
 const Page = () => {

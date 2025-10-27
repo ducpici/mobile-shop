@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import { toast } from "sonner";
-import { registerUser } from "@/redux/authSlice";
+import { registerUser } from "@/(client)/redux/slices/authSlice";
 
 const Page = () => {
   const dispatch = useAppDispatch();

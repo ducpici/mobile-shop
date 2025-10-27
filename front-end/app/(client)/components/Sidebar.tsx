@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Menu, Store, ShoppingCart, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/hooks/storeHook";
-import { setCollapsed, setMobileOpen } from "@/redux/sidebarSlice";
+import { setCollapsed, setMobileOpen } from "@/(client)/redux/slices/sidebarSlice";
 
 const Sidebar = () => {
   const pathname = usePathname();

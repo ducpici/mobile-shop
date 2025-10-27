@@ -69,6 +69,7 @@ const authSlice = createSlice({
       state.user = null;
       state.message = null;
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
       localStorage.removeItem("persist:root");
     },
     setUserFromLocal(state) {

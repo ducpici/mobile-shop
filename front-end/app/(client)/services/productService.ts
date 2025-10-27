@@ -20,8 +20,8 @@ export const productService = {
 
     if (minPrice !== undefined) params.append("price_gte", minPrice.toString());
     if (maxPrice !== undefined) params.append("price_lte", maxPrice.toString());
-    if (minStar !== undefined) params.append("star_gte", minStar.toString());
-    if (maxStar !== undefined) params.append("star_lte", maxStar.toString());
+    if (minStar !== undefined) params.append("rating_gte", minStar.toString());
+    if (maxStar !== undefined) params.append("rating_lte", maxStar.toString());
     if (search !== undefined && search.trim() !== "") {
       params.append("name_like", search);
     }

@@ -8,7 +8,6 @@ interface ProductState {
   currentPage: number;
   itemsPerPage: number;
   isLoading: boolean;
-  isLoaded: boolean;
   error: string | null;
 }
 
@@ -19,7 +18,6 @@ const initialState: ProductState = {
   currentPage: 1,
   itemsPerPage: 12,
   isLoading: false,
-  isLoaded: false,
   error: null,
 };
 
@@ -43,7 +41,6 @@ export const productSlice = createSlice({
       state.allProducts = action.payload.products;
       state.totalProduct = action.payload.total;
       state.isLoading = false;
-      state.isLoaded = true;
     },
     getAllProductFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;

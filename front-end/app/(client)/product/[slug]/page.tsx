@@ -5,12 +5,12 @@ import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
 import RatingStars from "@/components/RatingStars";
 import { toast } from "sonner";
-import { addToCart } from "@/redux/cartSlice";
+import { addToCart } from "@/redux/slices/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { getProductById } from "@/redux/productSlice";
+import { getProductById } from "@/redux/slices/productSlice";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { CartBadge } from "@/components/CartBadge";
-import { addUserCart } from "@/redux/cartSlice";
+import { addUserCart } from "@/redux/slices/cartSlice";
 
 const Page = ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = React.use(params);

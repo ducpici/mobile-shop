@@ -1,13 +1,23 @@
-// import { combineEpics, Epic } from "redux-observable";
-// import { getUserEpic, updateUserEpic } from "./profile/profileEpic";
-// import type { Action } from "@reduxjs/toolkit";
-// import type { RootState } from "../store";
+// import { combineEpics } from "redux-observable";
+// import { profileEpics } from "./profileEpic";
+// import { productEpics } from "./productEpic";
+// import { cartEpics } from "./cartEpic";
+// import { authEpics } from "./authEpic";
 
-// export const rootEpic: Epic<Action, Action, RootState> = combineEpics(getUserEpic, updateUserEpic);
+// export const rootEpic = combineEpics(...profileEpics, ...productEpics, ...cartEpics, ...authEpics);
+
+import { Epic } from "redux-observable";
+import type { Action } from "@reduxjs/toolkit";
+import type { RootState } from "@/redux/store";
 import { combineEpics } from "redux-observable";
-import { profileEpics } from "./profile";
-import { productEpics } from "./product";
-import { cartEpics } from "./cart";
-import { authEpic } from "./auth";
+import { profileEpics } from "./profileEpic";
+import { productEpics } from "./productEpic";
+import { cartEpics } from "./cartEpic";
+import { authEpics } from "./authEpic";
 
-export const rootEpic = combineEpics(...profileEpics, ...productEpics, ...cartEpics, ...authEpic);
+export const rootEpic: Epic<Action, Action, RootState> = combineEpics(
+  ...profileEpics,
+  ...productEpics,
+  ...cartEpics,
+  ...authEpics,
+);

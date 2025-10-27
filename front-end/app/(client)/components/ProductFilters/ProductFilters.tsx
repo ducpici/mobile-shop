@@ -21,9 +21,9 @@ import {
   setMinStar,
   setMaxStar,
   resetFilters,
-} from "@/redux/filterSlice";
-import { setSearchValue } from "@/redux/searchSlice";
-import { getAllProduct } from "@/redux/productSlice";
+} from "@/(client)/redux/slices/filterSlice";
+import { setSearchValue } from "@/(client)/redux/slices/searchSlice";
+import { getAllProduct } from "@/(client)/redux/slices/productSlice";
 
 const ProductFilters = () => {
   const dispatch = useAppDispatch();

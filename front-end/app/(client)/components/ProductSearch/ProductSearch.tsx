@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { setSearchValue } from "@/redux/searchSlice";
-import { getAllProduct } from "@/redux/productSlice";
+import { setSearchValue } from "@/(client)/redux/slices/searchSlice";
+import { getAllProduct } from "@/(client)/redux/slices/productSlice";
 const ProductSearch = () => {
   const dispatch = useAppDispatch();
   const searchValue = useAppSelector((state) => state.search.value);

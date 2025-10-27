@@ -1,19 +1,9 @@
 import { Epic, ofType } from "redux-observable";
 import { Action } from "redux";
-import {
-  switchMap,
-  map,
-  catchError,
-  of,
-  concatWith,
-  startWith,
-  delay,
-  forkJoin,
-  concat,
-} from "rxjs";
+import { switchMap, map, catchError, of, concatWith, startWith, delay, forkJoin } from "rxjs";
 import type { RootState } from "@/redux/store";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { showLoading, hideLoading } from "@/redux/loadingSlice";
+import { showLoading, hideLoading } from "@/redux/slices/loadingSlice";
 import {
   getUserCart,
   setUserCart,
@@ -30,54 +20,26 @@ import {
   mergeLocalToServerCart,
   mergeLocalToServerCartSuccess,
   mergeLocalToServerCartFailure,
-} from "@/redux/cartSlice";
+} from "@/redux/slices/cartSlice";
 import { clearCartStorage } from "@/helpers/cartLocalStorage";
 import { cartService } from "@/services/cartService";
-import { productService } from "@/services/productService";
 import { CartItem, LocalCart } from "@/types/cart";
-import { Product } from "@/types/product";
 
-// export const getCartItem: Epic<Action, Action, RootState> = (actions$) =>
-//   actions$.pipe(
-//     ofType(getUserCart.type),
-//     switchMap((action) => {
-//       const userId = (action as PayloadAction<number>).payload;
-//       return cartService.getCartByUserId(userId).pipe(
-//         switchMap((res) => {
-//           const carts = res.response;
-//           const cartId = carts?.[0]?.id;
-//           if (!cartId) {
-//             return of(getUserCartFailure("Not found"));
-//           }
-//           return cartService.getItemsByCartId(Number(cartId)).pipe(
-//             delay(800),
-//             map((res) => setUserCart(res.response)),
-//             catchError(() => of(getUserCartFailure("Not found"))),
-//           );
-//         }),
-//         catchError(() => of(getUserCartFailure("Server error"))),
-//         startWith(showLoading()),
-//         concatWith(of(hideLoading())),
-//       );
-//     }),
-//   );
-
-export const getCartItem: Epic<Action, Action, RootState> = (actions$) =>
+const getCartItemEpic: Epic<Action, Action, RootState> = (actions$) =>
   actions$.pipe(
     ofType(getUserCart.type),
-    switchMap((action: PayloadAction<number>) =>
-      concat(
-        of(showLoading()),
-        cartService.getUserCartWithProduct(action.payload).pipe(
-          map((cartWithProducts: CartItem[]) => setUserCart(cartWithProducts)),
-          catchError(() => of(getUserCartFailure("Failed to fetch cart"))),
-        ),
-        of(hideLoading()),
-      ),
-    ),
+    switchMap((action) => {
+      const payload = (action as PayloadAction<number>).payload;
+      return cartService.getUserCartWithProduct(payload).pipe(
+        map((cartWithProducts: CartItem[]) => setUserCart(cartWithProducts)),
+        catchError(() => of(getUserCartFailure("Failed to fetch cart"))),
+        startWith(showLoading()),
+        concatWith(of(hideLoading()).pipe(delay(500))),
+      );
+    }),
   );
 
-export const addUserCartEpic: Epic<Action, Action, RootState> = (action$) =>
+const addUserCartEpic: Epic<Action, Action, RootState> = (action$) =>
   action$.pipe(
     ofType(addUserCart.type),
     switchMap((action) => {
@@ -140,7 +102,7 @@ export const addUserCartEpic: Epic<Action, Action, RootState> = (action$) =>
     }),
   );
 
-export const updateUserCartQuantityEpic: Epic<Action, Action, RootState> = (action$) =>
+const updateUserCartQuantityEpic: Epic<Action, Action, RootState> = (action$) =>
   action$.pipe(
     ofType(updateUserCartQuantity.type),
     switchMap((action) => {
@@ -154,7 +116,7 @@ export const updateUserCartQuantityEpic: Epic<Action, Action, RootState> = (acti
     }),
   );
 
-export const deleteUserCartEpic: Epic<Action, Action, RootState> = (action$) =>
+const deleteUserCartEpic: Epic<Action, Action, RootState> = (action$) =>
   action$.pipe(
     ofType(deleteUserCart.type),
     switchMap((action) => {
@@ -167,7 +129,7 @@ export const deleteUserCartEpic: Epic<Action, Action, RootState> = (action$) =>
     }),
   );
 
-export const mergeLocalToServerCartEpic: Epic<Action, Action, RootState> = (action$) =>
+const mergeLocalToServerCartEpic: Epic<Action, Action, RootState> = (action$) =>
   action$.pipe(
     ofType(mergeLocalToServerCart.type),
     switchMap((action: PayloadAction<{ user_id: number; localCart: LocalCart }>) => {
@@ -232,3 +194,11 @@ export const mergeLocalToServerCartEpic: Epic<Action, Action, RootState> = (acti
       );
     }),
   );
+
+export const cartEpics = [
+  getCartItemEpic,
+  addUserCartEpic,
+  updateUserCartQuantityEpic,
+  deleteUserCartEpic,
+  mergeLocalToServerCartEpic,
+];

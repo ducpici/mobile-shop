@@ -11,8 +11,8 @@ import {
   updateUser,
   updateUserSuccess,
   updateUserError,
-} from "@/redux/profileSlice";
-import { showLoading, hideLoading } from "@/redux/loadingSlice";
+} from "@/redux/slices/profileSlice";
+import { showLoading, hideLoading } from "@/redux/slices/loadingSlice";
 import { PayloadAction } from "@reduxjs/toolkit";
 
 export const getUserEpic: Epic<Action, Action, RootState> = (action$) =>
@@ -22,7 +22,7 @@ export const getUserEpic: Epic<Action, Action, RootState> = (action$) =>
       const payload = (action as PayloadAction<number>).payload;
       return userService.getUser(payload).pipe(
         map((res) => getUserSuccess(res.response)),
-        catchError((err) => of(getUserError("Fail to get profile"))),
+        catchError(() => of(getUserError("Fail to get profile"))),
         startWith(showLoading()),
         concatWith(of(hideLoading()).pipe(delay(500))),
       );
@@ -69,4 +69,4 @@ export const updateUserEpic: Epic<Action, Action, RootState> = (action$) =>
 //     ),
 //   );
 
-export const profileEpic = [getUserEpic, updateUserEpic];
+export const profileEpics = [getUserEpic, updateUserEpic];

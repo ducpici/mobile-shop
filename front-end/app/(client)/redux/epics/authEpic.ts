@@ -8,13 +8,13 @@ import {
   registerUser,
   registerUserSuccess,
   registerUserFailure,
-} from "@/redux/authSlice";
+} from "@/redux/slices/authSlice";
 import { authService } from "@/services/authService";
 import type { Action, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/redux/store";
 import { v4 as uuidv4 } from "uuid";
 
-export const loginUserEpic: Epic<Action, Action, RootState> = (action$) =>
+const loginUserEpic: Epic<Action, Action, RootState> = (action$) =>
   action$.pipe(
     ofType(loginUser.type),
     switchMap(({ payload }) =>
@@ -31,6 +31,7 @@ export const loginUserEpic: Epic<Action, Action, RootState> = (action$) =>
             name: user.name,
             email: user.email,
           };
+
           return loginUserSuccess(userData);
         }),
         catchError(() => of(registerUserFailure("Server error. Please try again later."))),
@@ -38,7 +39,7 @@ export const loginUserEpic: Epic<Action, Action, RootState> = (action$) =>
     ),
   );
 
-export const registerUserEpic: Epic<Action, Action, RootState> = (action$) =>
+const registerUserEpic: Epic<Action, Action, RootState> = (action$) =>
   action$.pipe(
     ofType(registerUser.type),
     switchMap((action) => {
@@ -69,3 +70,5 @@ export const registerUserEpic: Epic<Action, Action, RootState> = (action$) =>
       );
     }),
   );
+
+export const authEpics = [loginUserEpic, registerUserEpic];

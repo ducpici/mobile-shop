@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
-import { Plus, Minus, CircleX } from "lucide-react";
+import { Plus, Minus, CircleX, ShoppingCart } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,13 +24,13 @@ import {
   updateQuantity,
   deleteUserCart,
   getUserCart,
-} from "@/redux/cartSlice";
+} from "@/redux/slices/cartSlice";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { joinProductToCartLocal, joinProductToCartUser } from "@/helpers/cartUtils";
+
 import { selectCartItemCount } from "@/redux/selectors/cartSelectors";
-import { updateUserCartQuantity } from "@/redux/cartSlice";
+import { updateUserCartQuantity } from "@/redux/slices/cartSlice";
 import { calculateCartTotals } from "@/helpers/cartUtils";
-import { hideLoading } from "@/redux/loadingSlice";
+import { hideLoading } from "@/redux/slices/loadingSlice";
 import { forkJoin } from "rxjs";
 import { productService } from "@/services/productService";
 
@@ -60,6 +60,10 @@ const Page = () => {
     if (user) {
       setCartItems(userCart);
     } else {
+      if (localCart.length === 0) {
+        setCartItems([]);
+        return;
+      }
       // user chưa login -> lấy cart từ localStorage
       // Tạo array các request API cho từng product_id
       const requests = localCart.map((item) => productService.getById(Number(item.product_id)));
@@ -139,7 +143,13 @@ const Page = () => {
           <>
             {cartItems.length == 0 ? (
               <>
-                <p className="text-center">Cart Empty!</p>
+                <div className="flex h-full flex-1 flex-col">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <ShoppingCart size={50} className="text-gray-400" />
+                    <h3 className="text-lg font-semibold">Your cart is empty!</h3>
+                    <p className="text-sm">Explore our products and add items to your cart</p>
+                  </div>
+                </div>
               </>
             ) : (
               <>

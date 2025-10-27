@@ -5,10 +5,10 @@ import { Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
-import { addToCart } from "@/redux/cartSlice";
+import { addToCart } from "@/(client)/redux/slices/cartSlice";
 import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
-import { addUserCart } from "@/redux/cartSlice";
+import { addUserCart } from "@/(client)/redux/slices/cartSlice";
 
 type ProductCardProps = {
   product: Product;

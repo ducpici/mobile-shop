@@ -3,10 +3,17 @@ import { useEffect, useState } from "react";
 import React from "react";
 import BreadCrumb from "@/components/Breadcrumb";
 import Image from "next/image";
-import { UserPen, CircleX, Calendar as CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
+import {
+  UserPen,
+  CircleX,
+  Calendar as CalendarIcon,
+  Check,
+  ChevronsUpDown,
+  User2Icon,
+} from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { User, GenderLabel, Gender } from "@/types/user";
-import { formatDate } from "../utils/formatDate";
+import { formatDate } from "@/utils/formatDate";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -19,7 +26,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { format } from "date-fns";
-import { getUser, updateUser } from "@/redux/profileSlice";
+import { getUser, updateUser } from "@/redux/slices/profileSlice";
 import { CartBadge } from "@/components/CartBadge";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -87,7 +94,11 @@ const Page = () => {
         {isLoading ? (
           <LoadingSpinner />
         ) : !profile ? (
-          <p className="text-center">Not found!</p>
+          <div className="flex flex-col items-center justify-center gap-2">
+            <User2Icon size={50} className="text-gray-400" />
+            <h3 className="text-lg font-semibold">Profile not found!</h3>
+            <p className="text-sm">Please login to your account.</p>
+          </div>
         ) : (
           <div className="">
             <div className="flex items-center justify-between">
@@ -233,7 +244,7 @@ const Page = () => {
                       <ChevronsUpDown className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="z-[1000] w-[200px] p-0">
+                  <PopoverContent className="z-[1000] w-fit p-0" side="bottom" align="start">
                     <Command>
                       <CommandList>
                         <CommandEmpty>No gender found.</CommandEmpty>
